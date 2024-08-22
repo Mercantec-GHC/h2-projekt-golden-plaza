@@ -13,7 +13,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); //add connection
 
+builder.Services.AddCors(
+    options => { options.AddPolicy("AllowReactApp", 
+        builder => { builder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader(); 
+        }); 
+    }
+);
+
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
+
+app.UseCors("AllowReactApp");
+
+
 
 // Configure the HTTP request pipeline.
 app.UseSwagger();
