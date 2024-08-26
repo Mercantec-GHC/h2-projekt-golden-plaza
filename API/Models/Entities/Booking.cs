@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace API.Models.Entities;
 
-public class RoomAvailability
+public class Booking
 {
     [Key]
     public int Id { get; set; }
@@ -16,6 +16,6 @@ public class RoomAvailability
     // Foreign key to Room
     public int RoomId { get; set; }
 
-    [JsonIgnore] // Ignore to break the cycle
+    [JsonIgnore] 
     public Room Room { get; set; }
 }

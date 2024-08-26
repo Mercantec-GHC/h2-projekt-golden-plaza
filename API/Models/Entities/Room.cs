@@ -17,8 +17,8 @@ public class Room
 
     public decimal PricePerNight { get; set; }
 
-    [JsonIgnore] // Ignore to break the cycle
-    public List<RoomAvailability> Availabilities { get; set; }
+    [JsonIgnore] 
+    public List<Booking> Availabilities { get; set; }
 
     // Facilities as a list of strings
     public List<string> Facilities { get; set; }

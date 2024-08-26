@@ -50,9 +50,9 @@ namespace API.Services;
             _context.SaveChanges();
         }
 
-        private List<RoomAvailability> GenerateRoomAvailability(decimal basePrice, Room room)
+        private List<Booking> GenerateRoomAvailability(decimal basePrice, Room room)
         {
-            var availabilities = new List<RoomAvailability>();
+            var availabilities = new List<Booking>();
             DateTime startDate = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);  // Set to UTC
             DateTime endDate = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59, DateTimeKind.Utc);  // Set to UTC
 
@@ -60,18 +60,18 @@ namespace API.Services;
             {
                 decimal price = basePrice;
 
-                // Adjust price for weekends
+                // Adjust price for weekends etc.
                 if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
                 {
                     price *= 1.2m;
                 }
 
-                availabilities.Add(new RoomAvailability
+                availabilities.Add(new Booking
                 {
-                    Date = date,  // Date is already in UTC
+                    Date = date,  
                     Price = price,
                     IsReserved = false,
-                    RoomId = room.Id  // Ensure the RoomId is correctly associated
+                    RoomId = room.Id  
                 });
             }
 

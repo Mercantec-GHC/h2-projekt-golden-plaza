@@ -7,29 +7,29 @@ namespace API.Controllers;
 
 [Route("api/[controller]")]
     [ApiController]
-    public class RoomAvailabilityController : ControllerBase
+    public class BookingController : ControllerBase
     {
         private readonly ApplicationDBContext _context;
 
-        public RoomAvailabilityController(ApplicationDBContext context)
+        public BookingController(ApplicationDBContext context)
         {
             _context = context;
         }
 
         // GET: api/RoomAvailability
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoomAvailability>>> GetRoomAvailabilities()
+        public async Task<ActionResult<IEnumerable<Booking>>> GetRoomAvailabilities()
         {
-            return await _context.RoomAvailabilities
+            return await _context.Bookings
                 .Include(ra => ra.Room)
                 .ToListAsync();
         }
 
         // GET: api/RoomAvailability/CheckAvailability
         [HttpGet("CheckAvailability")]
-        public async Task<ActionResult<IEnumerable<RoomAvailability>>> CheckAvailability(int roomId, DateTime startDate, DateTime endDate)
+        public async Task<ActionResult<IEnumerable<Booking>>> CheckAvailability(int roomId, DateTime startDate, DateTime endDate)
         {
-            var availableDates = await _context.RoomAvailabilities
+            var availableDates = await _context.Bookings
                 .Where(ra => ra.RoomId == roomId && ra.Date >= startDate && ra.Date <= endDate && !ra.IsReserved)
                 .ToListAsync();
 
@@ -43,9 +43,9 @@ namespace API.Controllers;
 
         // GET: api/RoomAvailability/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RoomAvailability>> GetRoomAvailability(int id)
+        public async Task<ActionResult<Booking>> GetRoomAvailability(int id)
         {
-            var roomAvailability = await _context.RoomAvailabilities
+            var roomAvailability = await _context.Bookings
                 .Include(ra => ra.Room)
                 .FirstOrDefaultAsync(ra => ra.Id == id);
 
@@ -69,7 +69,7 @@ namespace API.Controllers;
                 return BadRequest(new { message = "Start date cannot be after end date." });
             }
 
-            var availabilities = await _context.RoomAvailabilities
+            var availabilities = await _context.Bookings
                 .Where(ra => ra.RoomId == roomId && ra.Date >= startDate && ra.Date <= endDate && !ra.IsReserved)
                 .ToListAsync();
 
@@ -99,14 +99,14 @@ namespace API.Controllers;
 
         // PUT: api/RoomAvailability/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutRoomAvailability(int id, RoomAvailability roomAvailability)
+        public async Task<IActionResult> PutRoomAvailability(int id, Booking booking)
         {
-            if (id != roomAvailability.Id)
+            if (id != booking.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(roomAvailability).State = EntityState.Modified;
+            _context.Entry(booking).State = EntityState.Modified;
 
             try
             {
@@ -129,25 +129,25 @@ namespace API.Controllers;
 
         // POST: api/RoomAvailability
         [HttpPost]
-        public async Task<ActionResult<RoomAvailability>> PostRoomAvailability(RoomAvailability roomAvailability)
+        public async Task<ActionResult<Booking>> PostRoomAvailability(Booking booking)
         {
-            _context.RoomAvailabilities.Add(roomAvailability);
+            _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRoomAvailability), new { id = roomAvailability.Id }, roomAvailability);
+            return CreatedAtAction(nameof(GetRoomAvailability), new { id = booking.Id }, booking);
         }
 
         // DELETE: api/RoomAvailability/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteRoomAvailability(int id)
         {
-            var roomAvailability = await _context.RoomAvailabilities.FindAsync(id);
+            var roomAvailability = await _context.Bookings.FindAsync(id);
             if (roomAvailability == null)
             {
                 return NotFound();
             }
 
-            _context.RoomAvailabilities.Remove(roomAvailability);
+            _context.Bookings.Remove(roomAvailability);
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -155,6 +155,6 @@ namespace API.Controllers;
 
         private bool RoomAvailabilityExists(int id)
         {
-            return _context.RoomAvailabilities.Any(e => e.Id == id);
+            return _context.Bookings.Any(e => e.Id == id);
         }
     }
