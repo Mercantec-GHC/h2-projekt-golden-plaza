@@ -18,4 +18,10 @@ public class Booking
 
     [JsonIgnore] 
     public Room Room { get; set; }
+
+    // Foreign key to Customer
+    public int? CustomerId { get; set; }  // Make CustomerId nullable
+
+    [JsonIgnore] 
+    public Customer Customer { get; set; }
 }
