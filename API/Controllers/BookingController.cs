@@ -113,35 +113,7 @@ public class BookingController : ControllerBase
     }
 
 
-    // PUT: api/Booking/5
-    [HttpPut("{id}")]
-    public async Task<IActionResult> PutBooking(int id, Booking booking)
-    {
-        if (id != booking.Id)
-        {
-            return BadRequest();
-        }
 
-        _context.Entry(booking).State = EntityState.Modified;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!BookingExists(id))
-            {
-                return NotFound();
-            }
-            else
-            {
-                throw;
-            }
-        }
-
-        return NoContent();
-    }
 
     // POST: api/Booking
     [HttpPost]
