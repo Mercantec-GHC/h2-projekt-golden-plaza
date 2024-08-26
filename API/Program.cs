@@ -1,37 +1,59 @@
-using API.Data;
 using Microsoft.EntityFrameworkCore;
+using API.Data;
+using API.Services;
+using System.Text.Json.Serialization;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))); //add connection
+// Add DbContext with Npgsql
+builder.Services.AddDbContext<ApplicationDBContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddCors(
-    options => { options.AddPolicy("AllowReactApp", 
-        builder => { builder.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader(); 
-        }); 
-    }
-);
+// Add Controllers and configure JSON serialization to handle reference loops
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+    });
 
-builder.Services.AddSwaggerGen();
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
+// Register RoomInitializationService
+builder.Services.AddScoped<RoomInitializationService>();
 
 var app = builder.Build();
 
-app.UseCors("AllowReactApp");
-
-
+// Initialize rooms on application startup
+using (var scope = app.Services.CreateScope())
+{
+    var roomInitializationService = scope.ServiceProvider.GetRequiredService<RoomInitializationService>();
+    roomInitializationService.InitializeRooms();
+}
 
 // Configure the HTTP request pipeline.
-app.UseSwagger();
-app.UseSwaggerUI();
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
+// Use CORS
+app.UseCors("AllowAll");
 
 app.UseHttpsRedirection();
 
