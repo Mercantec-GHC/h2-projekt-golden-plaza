@@ -20,6 +20,6 @@ public class Room
     [JsonIgnore] 
     public List<Booking> Availabilities { get; set; }
 
-    // Facilities as a list of strings
+    
     public List<string> Facilities { get; set; }
 }

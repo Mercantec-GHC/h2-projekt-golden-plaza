@@ -41,7 +41,7 @@ namespace API.Controllers;
 
 
         // PUT: api/Rooms/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoom(int id, Room room)
         {
@@ -72,7 +72,7 @@ namespace API.Controllers;
         }
 
         // POST: api/Rooms
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPost]
         public async Task<ActionResult<Room>> PostRoom(Room room)
         {

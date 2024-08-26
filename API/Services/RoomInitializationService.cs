@@ -81,7 +81,7 @@ namespace API.Services
                     Date = date,
                     Price = price,
                     IsReserved = false,
-                    RoomId = room.Id  // Ensure the RoomId is correctly set
+                    RoomId = room.Id  
                 });
             }
 

@@ -22,7 +22,7 @@ public class BookingController : ControllerBase
     {
         return await _context.Bookings
             .Include(b => b.Room)
-            .Include(b => b.Customer)  // Include the Customer information
+            .Include(b => b.Customer)
             .ToListAsync();
     }
 
@@ -36,7 +36,7 @@ public class BookingController : ControllerBase
 
         if (!availableDates.Any())
         {
-            return NotFound(new { message = "No available dates for the selected room and date range." });
+            return NotFound();
         }
 
         return Ok(availableDates);
@@ -48,7 +48,7 @@ public class BookingController : ControllerBase
     {
         var booking = await _context.Bookings
             .Include(b => b.Room)
-            .Include(b => b.Customer)  // Include the Customer information
+            .Include(b => b.Customer)
             .FirstOrDefaultAsync(b => b.Id == id);
 
         if (booking == null)
@@ -59,22 +59,19 @@ public class BookingController : ControllerBase
         return booking;
     }
 
+    // PUT: api/Booking/BookRoom
     [HttpPut("BookRoom")]
     public async Task<IActionResult> BookRoom([FromQuery] int roomId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int customerId)
     {
-        // Ensure the dates are in UTC
-        startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
-        endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
-
         if (startDate > endDate)
         {
-            return BadRequest(new { message = "Start date cannot be after end date." });
+            return BadRequest();
         }
 
         var room = await _context.Rooms.FindAsync(roomId);
         if (room == null)
         {
-            return NotFound(new { message = "Room not found." });
+            return NotFound();
         }
 
         var availabilities = await _context.Bookings
@@ -83,52 +80,33 @@ public class BookingController : ControllerBase
 
         if (!availabilities.Any())
         {
-            return BadRequest(new { message = "The room is not available for the selected dates." });
+            return BadRequest();
         }
 
         var customer = await _context.Customers.FindAsync(customerId);
         if (customer == null)
         {
-            return NotFound(new { message = "Customer not found." });
+            return NotFound();
         }
 
         foreach (var availability in availabilities)
         {
             availability.IsReserved = true;
-            availability.CustomerId = customerId;  // Assign the CustomerId
-            _context.Entry(availability).State = EntityState.Modified;
+            availability.CustomerId = customerId;
         }
 
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            // Log exception
-            return Conflict(new { message = "A conflict occurred while updating the booking." });
-        }
-
-        return Ok(new { message = "Room booked successfully.", roomId, startDate, endDate });
+        await _context.SaveChangesAsync();
+        return Ok();
     }
-
-
-
 
     // POST: api/Booking
     [HttpPost]
     public async Task<ActionResult<Booking>> PostBooking(Booking booking)
     {
-        var customer = await _context.Customers.FindAsync(booking.CustomerId);
-        if (customer == null)
+        if (!_context.Customers.Any(c => c.UserId == booking.CustomerId) || 
+            !_context.Rooms.Any(r => r.Id == booking.RoomId))
         {
-            return NotFound(new { message = "Customer not found" });
-        }
-
-        var room = await _context.Rooms.FindAsync(booking.RoomId);
-        if (room == null)
-        {
-            return NotFound(new { message = "Room not found" });
+            return BadRequest();
         }
 
         _context.Bookings.Add(booking);
@@ -151,10 +129,5 @@ public class BookingController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private bool BookingExists(int id)
-    {
-        return _context.Bookings.Any(e => e.Id == id);
     }
 }
