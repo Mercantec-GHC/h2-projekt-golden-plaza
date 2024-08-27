@@ -15,7 +15,7 @@ public class Room
     
      public List<string> Facilities { get; set; }
     
-     //Foreign Key to Booking
+     // Navigation property to Bookings
      public List<Booking> Availabilities { get; set; }
 
    

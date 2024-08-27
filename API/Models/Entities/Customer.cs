@@ -8,6 +8,6 @@ public class Customer : User
     public string Address { get; set; }
     public string Email { get; set; }
     
-    //Foreign Key to Booking
+    // Navigation property to Bookings
     public List<Booking> Bookings { get; set; }
 }

@@ -1,6 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
-
 namespace API.Models.Entities;
 
 public class Booking
@@ -15,7 +12,7 @@ public class Booking
     
     public Customer Customer { get; set; }
     
-    public Room Room { get; set; }
+    public Room Room { get; set; } // Navigation property to Room
 
     // Foreign key to Room
     public int RoomId { get; set; }
@@ -23,3 +20,6 @@ public class Booking
     // Foreign key to Customer
     public int? CustomerId { get; set; }
 }
+
+// Foreign Key = Database relationship
+// Navigation property = Object reference for accessing related data in code
