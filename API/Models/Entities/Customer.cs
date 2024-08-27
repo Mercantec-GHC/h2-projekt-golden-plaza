@@ -8,6 +8,6 @@ public class Customer : User
     public string Address { get; set; }
     public string Email { get; set; }
     
-    // Navigation property to Bookings
+    // Navigation property to Booking
     public List<Booking> Bookings { get; set; }
 }

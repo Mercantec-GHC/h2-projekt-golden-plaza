@@ -49,7 +49,7 @@ namespace API.Controllers;
                 return BadRequest();
             }
 
-            // Attach the room entity to the context and mark it as modified
+           
             _context.Rooms.Update(room);
 
             try

@@ -1,8 +1,7 @@
 ﻿namespace API.Models.Entities;
 
 public class Room
-{
-    
+{ 
     public int Id { get; set; }
 
     public int Capacity { get; set; }
@@ -15,8 +14,6 @@ public class Room
     
      public List<string> Facilities { get; set; }
     
-     // Navigation property to Bookings
+     // Navigation property to Booking
      public List<Booking> Availabilities { get; set; }
-
-   
 }

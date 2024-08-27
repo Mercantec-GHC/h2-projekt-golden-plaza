@@ -21,5 +21,5 @@ public class Booking
     public int? CustomerId { get; set; }
 }
 
-// Foreign Key = Database relationship
+// Foreign Key = Database relationship (Is automatically genereated by EF, but written here for an easy overview)
 // Navigation property = Object reference for accessing related data in code
