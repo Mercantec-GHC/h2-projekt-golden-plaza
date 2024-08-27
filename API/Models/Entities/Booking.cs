@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
+
 
 namespace API.Models.Entities;
 
 public class Booking
 {
-    [Key]
+   
     public int Id { get; set; }
 
     public DateTime Date { get; set; }
@@ -16,12 +16,12 @@ public class Booking
     // Foreign key to Room
     public int RoomId { get; set; }
 
-    [JsonIgnore] 
+    
     public Room Room { get; set; }
 
     // Foreign key to Customer
     public int? CustomerId { get; set; } 
 
-  [JsonIgnore] 
+  
     public Customer Customer { get; set; }
 }

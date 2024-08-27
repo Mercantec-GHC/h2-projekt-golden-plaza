@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
-
-namespace API.Models.Entities;
+﻿namespace API.Models.Entities;
 
 public class Room
 {
@@ -17,7 +14,7 @@ public class Room
 
     public decimal PricePerNight { get; set; }
 
-    [JsonIgnore] 
+   
     public List<Booking> Availabilities { get; set; }
 
     
