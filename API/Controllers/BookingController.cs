@@ -20,10 +20,7 @@ public class BookingController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
     {
-        return await _context.Bookings
-            .Include(b => b.Room)
-            .Include(b => b.Customer)  // Include the Customer information
-            .ToListAsync();
+        return await _context.Bookings.ToListAsync();
     }
 
     // GET: api/Booking/CheckAvailability
@@ -46,10 +43,7 @@ public class BookingController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Booking>> GetBooking(int id)
     {
-        var booking = await _context.Bookings
-            .Include(b => b.Room)
-            .Include(b => b.Customer)  // Include the Customer information
-            .FirstOrDefaultAsync(b => b.Id == id);
+        var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
 
         if (booking == null)
         {
@@ -105,7 +99,7 @@ public class BookingController : ControllerBase
         }
         catch (DbUpdateConcurrencyException ex)
         {
-            // Log exception
+           
             return Conflict(new { message = "A conflict occurred while updating the booking." });
         }
 
@@ -113,9 +107,7 @@ public class BookingController : ControllerBase
     }
 
 
-
-
-    // POST: api/Booking
+// POST: api/Booking
     [HttpPost]
     public async Task<ActionResult<Booking>> PostBooking(Booking booking)
     {
@@ -153,8 +145,5 @@ public class BookingController : ControllerBase
         return NoContent();
     }
 
-    private bool BookingExists(int id)
-    {
-        return _context.Bookings.Any(e => e.Id == id);
-    }
+  
 }
