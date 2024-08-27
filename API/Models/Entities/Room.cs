@@ -5,7 +5,7 @@ namespace API.Models.Entities;
 
 public class Room
 {
-    [Key]
+    
     public int Id { get; set; }
 
     public int Capacity { get; set; }

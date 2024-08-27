@@ -14,27 +14,5 @@ public class ApplicationDBContext : DbContext
     {
     }
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        // Define a unique index on RoomNumber
-        modelBuilder.Entity<Room>()
-            .HasIndex(r => r.RoomNumber)
-            .IsUnique();
-
-        modelBuilder.Entity<Booking>()
-            .HasOne(b => b.Room)
-            .WithMany(r => r.Availabilities)
-            .HasForeignKey(b => b.RoomId);
-
-        modelBuilder.Entity<Booking>()
-            .HasOne(b => b.Customer)
-            .WithMany(c => c.Bookings)
-            .HasForeignKey(b => b.CustomerId);
-
-        // Configure inheritance mapping for User and Customer
-        modelBuilder.Entity<User>()
-            .HasDiscriminator<string>("UserType")
-            .HasValue<User>("User")
-            .HasValue<Customer>("Customer");
-    }
+  
 }

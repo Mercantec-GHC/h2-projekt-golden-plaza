@@ -31,7 +31,7 @@ public class BookingController : ControllerBase
     public async Task<ActionResult<IEnumerable<Booking>>> CheckAvailability(int roomId, DateTime startDate, DateTime endDate)
     {
         var availableDates = await _context.Bookings
-            .Where(ra => ra.RoomId == roomId && ra.Date >= startDate && ra.Date <= endDate && !ra.IsReserved)
+            .Where(b => b.RoomId == roomId && b.Date >= startDate && b.Date <= endDate && !b.IsReserved)
             .ToListAsync();
 
         if (!availableDates.Any())
@@ -78,7 +78,7 @@ public class BookingController : ControllerBase
         }
 
         var availabilities = await _context.Bookings
-            .Where(ra => ra.RoomId == roomId && ra.Date >= startDate && ra.Date <= endDate && !ra.IsReserved)
+            .Where(b => b.RoomId == roomId && b.Date >= startDate && b.Date <= endDate && !b.IsReserved)
             .ToListAsync();
 
         if (!availabilities.Any())
