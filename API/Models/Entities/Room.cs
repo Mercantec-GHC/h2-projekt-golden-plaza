@@ -9,14 +9,14 @@ public class Room
 
     public string RoomType { get; set; }
 
-       
     public required int RoomNumber { get; set; }
 
     public decimal PricePerNight { get; set; }
+    
+     public List<string> Facilities { get; set; }
+    
+     //Foreign Key to Booking
+     public List<Booking> Availabilities { get; set; }
 
    
-    public List<Booking> Availabilities { get; set; }
-
-    
-    public List<string> Facilities { get; set; }
 }

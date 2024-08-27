@@ -12,16 +12,14 @@ public class Booking
 
     public decimal Price { get; set; }
     public bool IsReserved { get; set; }
+    
+    public Customer Customer { get; set; }
+    
+    public Room Room { get; set; }
 
     // Foreign key to Room
     public int RoomId { get; set; }
 
-    
-    public Room Room { get; set; }
-
     // Foreign key to Customer
-    public int? CustomerId { get; set; } 
-
-  
-    public Customer Customer { get; set; }
+    public int? CustomerId { get; set; }
 }
