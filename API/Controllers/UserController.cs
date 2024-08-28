@@ -56,7 +56,8 @@ namespace API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(user).State = EntityState.Modified;
+            _context.Users.Update(user);
+
 
             try
             {

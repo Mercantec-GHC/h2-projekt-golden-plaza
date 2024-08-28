@@ -7,7 +7,7 @@ public class Customer : User
     public string UserName { get; set; }
     public string Address { get; set; }
     public string Email { get; set; }
-
-    // Navigation property for related bookings
+    
+    // Navigation property to Booking
     public List<Booking> Bookings { get; set; }
 }
