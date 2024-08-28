@@ -15,6 +15,7 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add Controllers and configure JSON serialization to handle reference loops
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
@@ -39,11 +40,13 @@ builder.Services.AddScoped<RoomInitializationService>();
 var app = builder.Build();
 
 // Initialize rooms on application startup
+/*
 using (var scope = app.Services.CreateScope())
 {
     var roomInitializationService = scope.ServiceProvider.GetRequiredService<RoomInitializationService>();
     roomInitializationService.InitializeRooms();
 }
+*/
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

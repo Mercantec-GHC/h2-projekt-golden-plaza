@@ -17,7 +17,7 @@ public class Room
 
     public decimal PricePerNight { get; set; }
 
-    [JsonIgnore] 
+    //[JsonIgnore] 
     public List<Booking> Availabilities { get; set; }
 
     

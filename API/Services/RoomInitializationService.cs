@@ -5,6 +5,7 @@ namespace API.Services
 {
     public class RoomInitializationService
     {
+        /*
         private readonly ApplicationDBContext _context;
 
         public RoomInitializationService(ApplicationDBContext context)
@@ -119,5 +120,7 @@ namespace API.Services
                 _context.SaveChanges();
             }
         }
+    */
     }
+    
 }

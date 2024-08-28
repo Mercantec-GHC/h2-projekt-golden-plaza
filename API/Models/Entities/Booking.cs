@@ -16,12 +16,12 @@ public class Booking
     // Foreign key to Room
     public int RoomId { get; set; }
 
-    [JsonIgnore] 
+    //[JsonIgnore] 
     public Room Room { get; set; }
 
     // Foreign key to Customer
     public int? CustomerId { get; set; } 
 
-  [JsonIgnore] 
+    //[JsonIgnore] 
     public Customer Customer { get; set; }
 }
