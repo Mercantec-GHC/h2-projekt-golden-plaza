@@ -20,10 +20,7 @@ public class BookingController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
     {
-        return await _context.Bookings
-            .Include(b => b.Room)
-            .Include(b => b.Customer)  // Include the Customer information
-            .ToListAsync();
+        return await _context.Bookings.ToListAsync();
     }
 
     // GET: api/Booking/CheckAvailability
@@ -46,10 +43,7 @@ public class BookingController : ControllerBase
     [HttpGet("{id}")]
     public async Task<ActionResult<Booking>> GetBooking(int id)
     {
-        var booking = await _context.Bookings
-            .Include(b => b.Room)
-            .Include(b => b.Customer)  // Include the Customer information
-            .FirstOrDefaultAsync(b => b.Id == id);
+        var booking = await _context.Bookings.FirstOrDefaultAsync(b => b.Id == id);
 
         if (booking == null)
         {
@@ -60,9 +54,9 @@ public class BookingController : ControllerBase
     }
 
     [HttpPut("BookRoom")]
-    public async Task<IActionResult> BookRoom([FromQuery] int roomId, [FromQuery] DateTime startDate, [FromQuery] DateTime endDate, [FromQuery] int customerId)
+    public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int customerId)
     {
-        // Ensure the dates are in UTC
+        
         startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
         endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
 
@@ -72,9 +66,11 @@ public class BookingController : ControllerBase
         }
 
         var room = await _context.Rooms.FindAsync(roomId);
-        if (room == null)
+        var customer = await _context.Customers.FindAsync(customerId);
+
+        if (room == null || customer == null)
         {
-            return NotFound(new { message = "Room not found." });
+            return NotFound(new { message = "Room or Customer not found." });
         }
 
         var availabilities = await _context.Bookings
@@ -86,36 +82,20 @@ public class BookingController : ControllerBase
             return BadRequest(new { message = "The room is not available for the selected dates." });
         }
 
-        var customer = await _context.Customers.FindAsync(customerId);
-        if (customer == null)
+        availabilities.ForEach(b =>
         {
-            return NotFound(new { message = "Customer not found." });
-        }
+            b.IsReserved = true;
+            b.CustomerId = customerId;
+        });
 
-        foreach (var availability in availabilities)
-        {
-            availability.IsReserved = true;
-            availability.CustomerId = customerId;  // Assign the CustomerId
-            _context.Entry(availability).State = EntityState.Modified;
-        }
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException ex)
-        {
-            // Log exception
-            return Conflict(new { message = "A conflict occurred while updating the booking." });
-        }
+        await _context.SaveChangesAsync();
 
         return Ok(new { message = "Room booked successfully.", roomId, startDate, endDate });
     }
 
 
 
-
-    // POST: api/Booking
+// POST: api/Booking
     [HttpPost]
     public async Task<ActionResult<Booking>> PostBooking(Booking booking)
     {
@@ -151,10 +131,5 @@ public class BookingController : ControllerBase
         await _context.SaveChangesAsync();
 
         return NoContent();
-    }
-
-    private bool BookingExists(int id)
-    {
-        return _context.Bookings.Any(e => e.Id == id);
     }
 }

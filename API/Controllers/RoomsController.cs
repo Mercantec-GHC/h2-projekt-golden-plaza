@@ -41,7 +41,6 @@ namespace API.Controllers;
 
 
         // PUT: api/Rooms/5
-        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutRoom(int id, Room room)
         {
@@ -50,7 +49,8 @@ namespace API.Controllers;
                 return BadRequest();
             }
 
-            _context.Entry(room).State = EntityState.Modified;
+           
+            _context.Rooms.Update(room);
 
             try
             {
@@ -58,7 +58,7 @@ namespace API.Controllers;
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoomExists(id))
+                if (!_context.Rooms.Any(e => e.Id == id))
                 {
                     return NotFound();
                 }
@@ -70,6 +70,7 @@ namespace API.Controllers;
 
             return NoContent();
         }
+
 
         // POST: api/Rooms
         

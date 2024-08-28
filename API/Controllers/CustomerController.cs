@@ -56,7 +56,8 @@ namespace API.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
+         
+            _context.Customers.Update(customer);
 
             try
             {
@@ -64,7 +65,7 @@ namespace API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CustomerExists(id))
+                if (!_context.Customers.Any(e => e.UserId == id))
                 {
                     return NotFound();
                 }
@@ -76,6 +77,7 @@ namespace API.Controllers
 
             return NoContent();
         }
+
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
