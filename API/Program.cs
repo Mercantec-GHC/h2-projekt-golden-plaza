@@ -1,5 +1,7 @@
+using API.Configuration;
 using Microsoft.EntityFrameworkCore;
 using API.Data;
+using API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,9 @@ builder.Services.AddDbContext<ApplicationDBContext>(options =>
 
 
 builder.Services.AddControllers();
+
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection("MailSettings")); // Add mail system
+builder.Services.AddTransient<IMailService, MailService>();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
