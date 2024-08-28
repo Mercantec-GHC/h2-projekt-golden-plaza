@@ -56,7 +56,7 @@ public class BookingController : ControllerBase
     [HttpPut("BookRoom")]
     public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int customerId)
     {
-        // Ensure the dates are in UTC
+        
         startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
         endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
 
