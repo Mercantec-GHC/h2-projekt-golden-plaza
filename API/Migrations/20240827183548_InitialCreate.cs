@@ -31,7 +31,26 @@ namespace API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RoomAvailabilities",
+                name: "Users",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    LoginStatus = table.Column<string>(type: "text", nullable: false),
+                    RegisterDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UserPassword = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false),
+                    UserName = table.Column<string>(type: "text", nullable: true),
+                    Address = table.Column<string>(type: "text", nullable: true),
+                    Email = table.Column<string>(type: "text", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.UserId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Bookings",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
@@ -39,39 +58,47 @@ namespace API.Migrations
                     Date = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
                     IsReserved = table.Column<bool>(type: "boolean", nullable: false),
-                    RoomId = table.Column<int>(type: "integer", nullable: false)
+                    RoomId = table.Column<int>(type: "integer", nullable: false),
+                    CustomerId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RoomAvailabilities", x => x.Id);
+                    table.PrimaryKey("PK_Bookings", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_RoomAvailabilities_Rooms_RoomId",
+                        name: "FK_Bookings_Rooms_RoomId",
                         column: x => x.RoomId,
                         principalTable: "Rooms",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Bookings_Users_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Users",
+                        principalColumn: "UserId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_RoomAvailabilities_RoomId",
-                table: "RoomAvailabilities",
-                column: "RoomId");
+                name: "IX_Bookings_CustomerId",
+                table: "Bookings",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Rooms_RoomNumber",
-                table: "Rooms",
-                column: "RoomNumber",
-                unique: true);
+                name: "IX_Bookings_RoomId",
+                table: "Bookings",
+                column: "RoomId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "RoomAvailabilities");
+                name: "Bookings");
 
             migrationBuilder.DropTable(
                 name: "Rooms");
+
+            migrationBuilder.DropTable(
+                name: "Users");
         }
     }
 }
