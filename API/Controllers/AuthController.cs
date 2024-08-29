@@ -37,6 +37,7 @@ namespace API.Controllers
             {
                 Email = request.Email,
                 PasswordHash = Convert.ToBase64String(passwordHash),
+                PasswordSalt = Convert.ToBase64String(passwordSalt),
                 LoginStatus = "Active",
                 RegisterDate = DateTime.UtcNow
             };
@@ -56,7 +57,7 @@ namespace API.Controllers
                 return BadRequest("User not found.");
             }
 
-            if (!VerifyPasswordHash(request.Password, Convert.FromBase64String(user.PasswordHash)))
+            if (!VerifyPasswordHash(request.Password, Convert.FromBase64String(user.PasswordHash), Convert.FromBase64String(user.PasswordSalt)))
             {
                 return BadRequest("Wrong password.");
             }
@@ -98,12 +99,12 @@ namespace API.Controllers
             }
         }
 
-        private bool VerifyPasswordHash(string password, byte[] passwordHash)
+        private bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
         {
-            using (var hmac = new HMACSHA512())
+            using (var hmac = new HMACSHA512(storedSalt))
             {
                 var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(passwordHash);
+                return computedHash.SequenceEqual(storedHash);
             }
         }
     }

@@ -11,6 +11,7 @@ public class User
     
     [Required]
     public string PasswordHash { get; set; }
+    public string PasswordSalt { get; set; }
     public string LoginStatus { get; set; }
     public DateTime RegisterDate { get; set; }
 }
