@@ -25,20 +25,41 @@ public class BookingController : ControllerBase
 
     // GET: api/Booking/CheckAvailability
     [HttpGet("CheckAvailability")]
-    public async Task<ActionResult<IEnumerable<Booking>>> CheckAvailability(int roomId, DateTime startDate, DateTime endDate)
+    public async Task<ActionResult> CheckAvailability(int roomId, DateTime startDate, DateTime endDate)
     {
-        
-        //Querying the database, finding all rooms in the given date range that are not booked.
+        // Needed UTC because postgres exspects that.
+        startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc); 
+        endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
+
+       
+        if (startDate > endDate)
+        {
+            return BadRequest(new { message = "Start date cannot be after end date." });
+        }
+
+        // Query the database to find all bookings within the given date range for the specified room
         var availableDates = await _context.Bookings
-            .Where(booking => booking.RoomId == roomId && booking.Date >= startDate && booking.Date <= endDate && !booking.IsReserved)
+            .Where(booking => booking.RoomId == roomId 
+                              && booking.Date >= startDate 
+                              && booking.Date <= endDate 
+                              && !booking.IsReserved)
             .ToListAsync();
 
+        
         if (!availableDates.Any())
         {
             return NotFound(new { message = "No available dates for the selected room and date range." });
         }
 
-        return Ok(availableDates);
+        // Calculate the total price for the available dates
+        var totalPrice = availableDates.Sum(booking => booking.Price);
+
+    
+        return Ok(new
+        {
+            AvailableDates = availableDates.Select(booking => new { booking.Date, booking.Price }),
+            TotalPrice = totalPrice
+        });
     }
 
     // GET: api/Booking/5
