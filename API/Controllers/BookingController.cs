@@ -2,6 +2,7 @@ using API.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
 
@@ -18,6 +19,7 @@ public class BookingController : ControllerBase
 
     // GET: api/Bookings
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
     {
         return await _context.Bookings.ToListAsync();
