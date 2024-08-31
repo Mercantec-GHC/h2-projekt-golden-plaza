@@ -24,16 +24,16 @@ namespace API.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<ActionResult<User>> Register(UserDto request)
+        public async Task<ActionResult<Customer>> Register(CustomerDto request)
         {
-            if (await _context.Users.AnyAsync(u => u.Email == request.Email))
+            if (await _context.Customers.AnyAsync(u => u.Email == request.Email))
             {
                 return BadRequest("User already exists.");
             }
 
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            var user = new User
+            var customer = new Customer
             {
                 Email = request.Email,
                 PasswordHash = Convert.ToBase64String(passwordHash),
@@ -42,37 +42,37 @@ namespace API.Controllers
                 RegisterDate = DateTime.UtcNow
             };
 
-            _context.Users.Add(user);
+            _context.Users.Add(customer);
             await _context.SaveChangesAsync();
 
-            return Ok(user);
+            return Ok(customer);
         }
 
         [HttpPost("login")]
-        public async Task<ActionResult<string>> Login(UserDto request)
+        public async Task<ActionResult<string>> Login(CustomerDto request)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
-            if (user == null)
+            var customer = await _context.Customers.FirstOrDefaultAsync(u => u.Email == request.Email);
+            if (customer == null)
             {
                 return BadRequest("User not found.");
             }
 
-            if (!VerifyPasswordHash(request.Password, Convert.FromBase64String(user.PasswordHash), Convert.FromBase64String(user.PasswordSalt)))
+            if (!VerifyPasswordHash(request.Password, Convert.FromBase64String(customer.PasswordHash), Convert.FromBase64String(customer.PasswordSalt)))
             {
                 return BadRequest("Wrong password.");
             }
 
-            string token = CreateToken(user);
+            string token = CreateToken(customer);
 
             return Ok(token);
         }
 
-        private string CreateToken(User user)
+        private string CreateToken(Customer customer)
         {
             List<Claim> claims = new List<Claim>
             {
-                new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.NameIdentifier, customer.UserId.ToString()),
+                new Claim(ClaimTypes.Email, customer.Email)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
@@ -109,7 +109,7 @@ namespace API.Controllers
         }
     }
 
-    public class UserDto
+    public class CustomerDto
     {
         public string Email { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
