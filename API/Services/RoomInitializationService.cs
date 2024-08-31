@@ -19,7 +19,7 @@ using API.Models.Entities;
 
 namespace API.Services
 {
-    /*
+    
    public class RoomInitializationService
    {
        private readonly ApplicationDBContext _context;
@@ -113,5 +113,5 @@ namespace API.Services
            return availabilities;
        }
    }
-   */
+   
 }
