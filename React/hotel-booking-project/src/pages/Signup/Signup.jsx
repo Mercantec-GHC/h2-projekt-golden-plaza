@@ -2,49 +2,41 @@ import './Signup.css'
 import InputField from "../../components/Signup & Login/InputField.jsx";
 import FormTitle from "../../components/Signup & Login/FormTitle.jsx";
 import FormButton from "../../components/Signup & Login/FormButton.jsx";
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from 'axios';
 
 function Signup() {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: ''
-    });
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    }
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         console.log('Form Submitted')
+        try {
+            console.log({email, password});
+            await axios.post("http://localhost:5021/api/auth/register",
+                {email, password}
+            );
+            console.log('Register successful');
+
+        } catch (error) {
+            console.error('Authentication error:', error.response.data);
+        }
     }
 
     return (
         <div className="signup-container">
             <FormTitle title="Sign Up" />
             <form onSubmit={handleSubmit}>
-                <InputField
-                    labelText="Name"
-                    inputType="text"
-                    inputId="name"
-                    inputName="name"
-                    value={formData.name}
-                    onChange={handleChange}
-                />
 
                 <InputField
                     labelText="Email"
                     inputType="email"
                     inputId="email"
                     inputName="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
 
                 <InputField
@@ -52,8 +44,8 @@ function Signup() {
                     inputType="password"
                     inputId="password"
                     inputName="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
 
                 <FormButton type="submit" text="Sign Up" />

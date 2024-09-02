@@ -3,24 +3,27 @@ import InputField from "../../components/Signup & Login/InputField.jsx";
 import FormTitle from "../../components/Signup & Login/FormTitle.jsx";
 import FormButton from "../../components/Signup & Login/FormButton.jsx";
 import { useState } from 'react'
+import axios from 'axios';
 
 function Login() {
-    const [formData, setFormData] = useState({
-        email: '',
-        password: ''
-    });
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
-    }
-
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
         console.log('Form Submitted')
+        try {
+            console.log({email, password});
+            const response = await axios.post("http://localhost:5021/api/auth/login",
+                {email, password}
+            );
+
+            localStorage.setItem('token', response.data);
+            console.log('Login successful');
+
+        } catch (error) {
+            console.error('Authentication error:', error.response.data);
+        }
     }
 
     return (
@@ -33,8 +36,8 @@ function Login() {
                     inputType="email"
                     inputId="email"
                     inputName="email"
-                    value={formData.email}
-                    onChange={handleChange}
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                 />
 
                 <InputField
@@ -42,8 +45,8 @@ function Login() {
                     inputType="password"
                     inputId="password"
                     inputName="password"
-                    value={formData.password}
-                    onChange={handleChange}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
                 />
 
                 <FormButton type="submit" text="Log In" />
