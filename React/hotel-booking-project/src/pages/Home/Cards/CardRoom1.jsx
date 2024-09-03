@@ -15,6 +15,10 @@ export default function MediaCard({ title, description, image }) {
                 color: 'rgb(180, 155, 99)',
                 borderRadius: '20px',
                 border: '2px solid rgb(180, 155, 99)',
+                transition: 'transform 0.3s ease-in-out',
+                '&:hover': {
+                    transform: 'scale(1.08)',
+                },
             }}
         >
             <CardMedia
@@ -31,8 +35,25 @@ export default function MediaCard({ title, description, image }) {
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small" sx={{ color: 'rgb(180, 155, 99)' }}>Book</Button>
-                <Button size="small" sx={{ color: 'rgb(180, 155, 99)' }}>Details</Button>
+                <Button
+                    size="small"
+                    sx={{
+                        color: 'rgb(180, 155, 99)',
+                        transition: 'background-color 0.3s ease, color 0.3s ease',
+                        '&:hover': {
+                            backgroundColor: 'rgb(180, 155, 99)',
+                            color: 'rgba(0, 0, 0, 0.85)',
+                        },
+                    }}
+                >
+                    Book
+                </Button>
+                <Button size="small" sx={{  color: 'rgb(180, 155, 99)',
+                    transition: 'background-color 0.3s ease, color 0.3s ease',
+                    '&:hover': {
+                        backgroundColor: 'rgb(180, 155, 99)',
+                        color: 'rgba(0, 0, 0, 0.85)',
+                    }, }}>Details</Button>
             </CardActions>
         </Card>
     );

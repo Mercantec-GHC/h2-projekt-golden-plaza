@@ -41,3 +41,19 @@ html, body {
         background-attachment: fixed;
     }
 }
+
+/* Media query for smaller screens */
+@media (max-width: 1024px) {
+    .card-container {
+        flex-wrap: wrap; /* Allow cards to wrap to the next line */
+        gap: 20px; /* Adjust gap for smaller screens */
+        justify-content: center; /* Center the cards */
+        align-items: flex-start; /* Align cards to the top */
+        margin-top: 100px; /* Remove margin to align better */
+    }
+
+    .card-container > .MuiCard-root {
+        width: 100%; /* Cards take full width on smaller screens */
+        max-width: 100%; /* Ensure cards don't exceed 100% width */
+    }
+}
