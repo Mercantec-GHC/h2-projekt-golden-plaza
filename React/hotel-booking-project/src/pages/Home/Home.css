@@ -33,26 +33,7 @@ html, body {
 }
 
 
-.carousel-container {
-    width: 100%;
-    max-width: 600px; /* Limit the max width */
-    margin: 0 auto; /* Center the carousel */
-    padding: 20px; /* Add padding if necessary */
-}
 
-.slick-prev, .slick-next {
-    color: rgb(180, 155, 99); /* Color of the arrows */
-    z-index: 1; /* Make sure arrows appear above the content */
-}
-
-.slick-dots li button:before {
-    color: rgb(180, 155, 99); /* Color of the dots */
-}
-
-.slick-slide > div {
-    display: flex;
-    justify-content: center;
-}
 
 @media (max-width: 768px) {
     .background {

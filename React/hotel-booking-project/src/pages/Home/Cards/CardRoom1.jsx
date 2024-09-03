@@ -6,25 +6,31 @@ import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-export default function MediaCard() {
+export default function MediaCard({ title, description, image }) {
     return (
-        <Card sx={{ width: 395 }}>
+        <Card
+            sx={{
+                width: 395,
+                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Dark background
+                color: 'rgb(180, 155, 99)' // Text color
+            }}
+        >
             <CardMedia
                 sx={{ height: 190 }}
-                image="src/assets/lazlo-panaflex-HSClqx534aI-unsplash.jpg"
-                title="Standard Room"
+                image={image}
+                title={title}
             />
             <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                    Standard Room
+                <Typography gutterBottom variant="h5" component="div" sx={{ color: 'rgb(180, 155, 99)' }}>
+                    {title}
                 </Typography>
-                <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-                    This is a description of the standard room. It includes amenities and other details.
+                <Typography variant="body2" sx={{ color: 'rgb(180, 155, 99)' }}>
+                    {description}
                 </Typography>
             </CardContent>
             <CardActions>
-                <Button size="small">Book</Button>
-                <Button size="small">Details</Button>
+                <Button size="small" sx={{ color: 'rgb(180, 155, 99)' }}>Book</Button>
+                <Button size="small" sx={{ color: 'rgb(180, 155, 99)' }}>Details</Button>
             </CardActions>
         </Card>
     );

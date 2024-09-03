@@ -5,21 +5,26 @@ import MediaCard from "./Cards/CardRoom1.jsx";
 const Home = () => {
     return (
         <div className="background">
-            <div>
-                <h1>
 
-                </h1>
+            <div className="card-container">
+                <MediaCard
+                    title="Standard Room"
+                    description="This is a description of the standard room. It includes amenities and other details."
+                    image="src/assets/lazlo-panaflex-HSClqx534aI-unsplash.jpg"
+                />
+                <MediaCard
+                    title="Deluxe Room"
+                    description="This is a description of the deluxe room. It offers premium amenities and extra space."
+                    image="src/assets/another-image.jpg"
+                />
+                <MediaCard
+                    title="Suite Room"
+                    description="This is a description of the suite room. It provides luxury accommodations with exclusive services."
+                    image="src/assets/yet-another-image.jpg"
+                />
             </div>
-
-            <div className="card-container"> {/* Add a container for the cards */}
-                <MediaCard/> {/* First card */}
-                <MediaCard/> {/* Second card */}
-                <MediaCard/> {/* Third card */}
-            </div>
-
-
         </div>
     );
 };
 
-export default Home
+export default Home;
