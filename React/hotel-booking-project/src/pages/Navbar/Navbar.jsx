@@ -13,7 +13,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import FlareIcon from '@mui/icons-material/Flare';
 
-const pages = ['Products', 'Pricing', 'Blog'];
+const pages = ['Book', 'Signup', 'Login'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -50,7 +50,7 @@ function ResponsiveAppBar() {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="#"x
+                        href="#"
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -131,7 +131,9 @@ function ResponsiveAppBar() {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                                <Avatar sx={{ bgcolor: 'rgb(180 155 99)', color: 'black' }}>
+                                    R
+                                </Avatar>
                             </IconButton>
                         </Tooltip>
                         <Menu
