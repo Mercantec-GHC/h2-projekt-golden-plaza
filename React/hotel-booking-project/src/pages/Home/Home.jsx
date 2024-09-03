@@ -1,21 +1,16 @@
-import { Link } from "react-router-dom";
+import React from 'react';
+import './Home.css';
 
-function Home() {
-    const token = localStorage.getItem("token");
-
+const Home = () => {
     return (
-        <>
-            <div>HomePage</div>
-            <Link to="/signup">Sign Up</Link>
-            <Link to="/login">Log In</Link>
+        <div className="background">
+            <div>
+                <h1>
 
-            {token ? (
-                <p>Logged in</p>
-            ) : (
-                <p>Not logged in</p>
-            )}
-        </>
-    )
-}
+                </h1>
+            </div>
+        </div>
+    );
+};
 
 export default Home
