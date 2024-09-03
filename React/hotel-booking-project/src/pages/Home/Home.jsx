@@ -9,18 +9,18 @@ const Home = () => {
             <div className="card-container">
                 <MediaCard
                     title="Standard Room"
-                    description="This is a description of the standard room. It includes amenities and other details."
-                    image="src/assets/lazlo-panaflex-HSClqx534aI-unsplash.jpg"
+                    description="Enkeltseng eller dobbeltseng, badeværelse med bruser, TV, skrivebord, Wi-Fi."
+                    image="src/assets/standard.jpg"
                 />
                 <MediaCard
-                    title="Deluxe Room"
-                    description="This is a description of the deluxe room. It offers premium amenities and extra space."
-                    image="src/assets/another-image.jpg"
+                    title="Penthouse"
+                    description="King-size seng, stort badeværelse med badekar og separat bruser, opholdsstue, TV, skrivebord, minibar, Wi-Fi, privat terrasse med udsigt.."
+                    image="src/assets/Deluxe.jpg"
                 />
                 <MediaCard
-                    title="Suite Room"
-                    description="This is a description of the suite room. It provides luxury accommodations with exclusive services."
-                    image="src/assets/yet-another-image.jpg"
+                    title="Premium Room"
+                    description="Dobbeltseng, badeværelse med badekar og bruser, TV, skrivebord, minibar, Wi-Fi, balkon."
+                    image="src/assets/suite.jpg"
                 />
             </div>
         </div>
