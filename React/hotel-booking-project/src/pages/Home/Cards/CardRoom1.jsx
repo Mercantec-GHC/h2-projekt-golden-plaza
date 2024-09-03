@@ -12,7 +12,9 @@ export default function MediaCard({ title, description, image }) {
             sx={{
                 width: 395,
                 backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                color: 'rgb(180, 155, 99)'
+                color: 'rgb(180, 155, 99)',
+                borderRadius: '20px',
+                border: '2px solid rgb(180, 155, 99)',
             }}
         >
             <CardMedia
