@@ -11,8 +11,8 @@ export default function MediaCard({ title, description, image }) {
         <Card
             sx={{
                 width: 395,
-                backgroundColor: 'rgba(0, 0, 0, 0.85)', // Dark background
-                color: 'rgb(180, 155, 99)' // Text color
+                backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                color: 'rgb(180, 155, 99)'
             }}
         >
             <CardMedia
