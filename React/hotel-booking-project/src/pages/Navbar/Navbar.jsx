@@ -13,7 +13,11 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import FlareIcon from '@mui/icons-material/Flare';
 
-const pages = ['Book', 'Signup', 'Login'];
+const pages = [
+    { label: 'Book', href: '/book' },
+    { label: 'Signup', href: '/signup' },
+    { label: 'Login', href: '/login' },
+];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 function ResponsiveAppBar() {
@@ -50,7 +54,7 @@ function ResponsiveAppBar() {
                         variant="h6"
                         noWrap
                         component="a"
-                        href="#"
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'none', md: 'flex' },
@@ -92,8 +96,15 @@ function ResponsiveAppBar() {
                             sx={{ display: { xs: 'block', md: 'none' } }}
                         >
                             {pages.map((page) => (
-                                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                    <Typography sx={{ textAlign: 'center', color: 'rgb(180 155 99)' }}>{page}</Typography>
+                                <MenuItem key={page.label} onClick={handleCloseNavMenu}>
+                                    <Typography
+                                        sx={{ textAlign: 'center', color: 'rgb(180 155 99)' }}
+                                        component="a"
+                                        href={page.href} // Use the href property
+                                        style={{ textDecoration: 'none', color: 'inherit' }}
+                                    >
+                                        {page.label}
+                                    </Typography>
                                 </MenuItem>
                             ))}
                         </Menu>
@@ -120,11 +131,12 @@ function ResponsiveAppBar() {
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                         {pages.map((page) => (
                             <Button
-                                key={page}
+                                key={page.label}
+                                href={page.href} // Use the href property
                                 onClick={handleCloseNavMenu}
                                 sx={{ my: 2, color: 'rgb(180 155 99)', display: 'block' }}
                             >
-                                {page}
+                                {page.label}
                             </Button>
                         ))}
                     </Box>
