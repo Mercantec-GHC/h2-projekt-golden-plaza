@@ -14,7 +14,7 @@ const Home = () => {
                 />
                 <MediaCard
                     title="Penthouse"
-                    description="King-size seng, stort badeværelse med badekar og separat bruser, opholdsstue, TV, skrivebord, minibar, Wi-Fi, privat terrasse med udsigt.."
+                    description="King-size seng, stort badeværelse med badekar og separat bruser, opholdsstue, TV, skrivebord, minibar, Wi-Fi, privat terrasse med udsigt."
                     image="src/assets/Deluxe.jpg"
                 />
                 <MediaCard
