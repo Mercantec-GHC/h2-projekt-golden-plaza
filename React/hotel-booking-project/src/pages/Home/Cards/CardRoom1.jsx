@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
 
-export default function MediaCard({ roomId, title, description, image }) {  // Accept roomId as a prop
+export default function MediaCard({ roomId, title, description, image }) {
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -43,6 +43,7 @@ export default function MediaCard({ roomId, title, description, image }) {  // A
                 setAvailabilityMessage(data.message || 'Room is not available for the selected dates.');
                 setTotalPrice(null);
             }
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
             setAvailabilityMessage('An error occurred while checking availability.');
         }
@@ -94,7 +95,7 @@ export default function MediaCard({ roomId, title, description, image }) {  // A
                         emailToId: customer.email,
                         emailToName: customer.email,
                         emailSubject: `Booking Confirmation: Room ${roomId}`,
-                        emailBody: `Dear customer,\n\nThank you for booking with us! Here are your booking details:\n\nRoom ID: ${roomId}\nCheck-in Date: ${new Date(startDate).toLocaleDateString()}\nCheck-out Date: ${new Date(endDate).toLocaleDateString()}\nTotal Price: $${totalPrice}\n\nWe look forward to your stay!\n\nBest regards,\nYour Hotel Team`
+                        emailBody: `Dear customer,\n\nThank you for booking with us! Here are your booking details:\n\nRoom ID: ${roomId}\nCheck-in Date: ${new Date(startDate).toLocaleDateString()}\nCheck-out Date: ${new Date(endDate).toLocaleDateString()}\nTotal Price: $${totalPrice}\n\nWe look forward to your stay!\n\nBest regards,\nThe Golden Plaza Hotel`
                     })
                 });
 
@@ -106,6 +107,7 @@ export default function MediaCard({ roomId, title, description, image }) {  // A
             } else {
                 setAvailabilityMessage(data.message || 'Failed to book the room.');
             }
+            // eslint-disable-next-line no-unused-vars
         } catch (error) {
             setAvailabilityMessage('An error occurred while booking the room.');
         }

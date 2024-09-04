@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import './Home.css';
 import MediaCard from "./Cards/CardRoom1.jsx";
+import image1 from '../../assets/suite.jpg';
+import image2 from '../../assets/Deluxe.jpg';
 
 const Home = () => {
     const [rooms, setRooms] = useState([]);
+    const imageMap = {
+        1: image1,
+        2: image2
+    };
 
     useEffect(() => {
         fetch('https://localhost:7207/api/Rooms')
@@ -11,6 +17,10 @@ const Home = () => {
             .then(data => setRooms(data))
             .catch(error => console.error('Error fetching rooms:', error));
     }, []);
+
+    const getImageForRoom = (roomId) => {
+        return imageMap[roomId] || image1;
+    };
 
     return (
         <div className="background">
@@ -21,7 +31,8 @@ const Home = () => {
                         roomId={room.id}  // Pass roomId as a prop
                         title={room.roomType}
                         description={`Room Number: ${room.roomNumber}, Capacity: ${room.capacity}, Price: $${room.pricePerNight}/night`}
-                        image={`src/assets/room${room.id}.jpg`}
+                        image={getImageForRoom(room.id)}
+                        facilities={room.facilities}
                     />
                 ))}
             </div>
