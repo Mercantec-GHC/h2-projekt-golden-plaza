@@ -25,7 +25,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 100px;
+    gap: 200px;
     flex-wrap: nowrap;
     padding: 20px;
     margin-top: -50px;

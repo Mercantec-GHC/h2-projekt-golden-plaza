@@ -26,6 +26,7 @@ function Signup() {
     }
 
     return (
+        <div className="backgroundSignup">
         <div className="signup-container">
             <FormTitle title="Sign Up" />
             <form onSubmit={handleSubmit}>
@@ -52,6 +53,7 @@ function Signup() {
             </form>
 
             <p>Already have an account? <Link to="/login">Log In</Link></p>
+        </div>
         </div>
     )
 }

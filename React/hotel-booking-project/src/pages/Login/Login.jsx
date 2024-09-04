@@ -27,6 +27,7 @@ function Login() {
     }
 
     return (
+        <div className="backgroundLogin">
         <div className="login-container">
             <FormTitle title="Log In" />
             <form onSubmit={handleSubmit}>
@@ -51,6 +52,7 @@ function Login() {
 
                 <FormButton type="submit" text="Log In" />
             </form>
+        </div>
         </div>
     )
 }

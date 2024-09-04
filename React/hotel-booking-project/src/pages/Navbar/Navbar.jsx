@@ -14,7 +14,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FlareIcon from '@mui/icons-material/Flare';
 
 const pages = [
-    { label: 'Book', href: '/book' },
+    { label: 'Contact', href: '/contact' },
     { label: 'Signup', href: '/signup' },
     { label: 'Login', href: '/login' },
 ];
@@ -114,7 +114,7 @@ function ResponsiveAppBar() {
                         variant="h5"
                         noWrap
                         component="a"
-                        href="#"
+                        href="/"
                         sx={{
                             mr: 2,
                             display: { xs: 'flex', md: 'none' },
@@ -144,7 +144,7 @@ function ResponsiveAppBar() {
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                                 <Avatar sx={{ bgcolor: 'rgb(180 155 99)', color: 'black' }}>
-                                    R
+                                    GP
                                 </Avatar>
                             </IconButton>
                         </Tooltip>

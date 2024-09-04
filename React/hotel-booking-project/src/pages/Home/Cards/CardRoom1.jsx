@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
 
-export default function MediaCard({ roomId, title, description, image }) {
+export default function MediaCard({ roomId, title, description, image, facilities }) {
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -140,6 +140,9 @@ export default function MediaCard({ roomId, title, description, image }) {
                 <Typography variant="body2" sx={{ color: 'rgb(180, 155, 99)' }}>
                     {description}
                 </Typography>
+                <Typography variant="body2" sx={{ color: 'rgb(180, 155, 99)' }}>
+                    Facilities: {facilities.join(', ')}
+                </Typography>
             </CardContent>
             <CardActions>
                 <Button
@@ -156,12 +159,7 @@ export default function MediaCard({ roomId, title, description, image }) {
                 >
                     Book
                 </Button>
-                <Button size="small" sx={{  color: 'rgb(180, 155, 99)',
-                    transition: 'background-color 0.3s ease, color 0.3s ease',
-                    '&:hover': {
-                        backgroundColor: 'rgb(180, 155, 99)',
-                        color: 'rgba(0, 0, 0, 0.85)',
-                    }, }}>Details</Button>
+
             </CardActions>
 
             <Modal
