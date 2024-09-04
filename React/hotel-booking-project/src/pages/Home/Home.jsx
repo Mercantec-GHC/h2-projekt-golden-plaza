@@ -1,27 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './Home.css';
 import MediaCard from "./Cards/CardRoom1.jsx";
 
 const Home = () => {
+    const [rooms, setRooms] = useState([]);
+
+    useEffect(() => {
+        fetch('https://localhost:7207/api/Rooms')
+            .then(response => response.json())
+            .then(data => setRooms(data))
+            .catch(error => console.error('Error fetching rooms:', error));
+    }, []);
+
     return (
         <div className="background">
-
             <div className="card-container">
-                <MediaCard
-                    title="Standard Room"
-                    description="Enkeltseng eller dobbeltseng, badeværelse med bruser, TV, skrivebord, Wi-Fi."
-                    image="src/assets/standard.jpg"
-                />
-                <MediaCard
-                    title="Penthouse"
-                    description="King-size seng, stort badeværelse med badekar og separat bruser, opholdsstue, TV, skrivebord, minibar, Wi-Fi, privat terrasse med udsigt."
-                    image="src/assets/Deluxe.jpg"
-                />
-                <MediaCard
-                    title="Premium Room"
-                    description="Dobbeltseng, badeværelse med badekar og bruser, TV, skrivebord, minibar, Wi-Fi, balkon."
-                    image="src/assets/suite.jpg"
-                />
+                {rooms.map(room => (
+                    <MediaCard
+                        key={room.id}
+                        roomId={room.id}  // Pass roomId as a prop
+                        title={room.roomType}
+                        description={`Room Number: ${room.roomNumber}, Capacity: ${room.capacity}, Price: $${room.pricePerNight}/night`}
+                        image={`src/assets/room${room.id}.jpg`}
+                    />
+                ))}
             </div>
         </div>
     );
