@@ -9,7 +9,7 @@ namespace API.Controllers;
 public class MailController : ControllerBase
 {
     IMailService Mail_Service = null;
-//injecting the IMailService into the constructor
+    //injecting the IMailService into the constructor
     public MailController(IMailService _MailService)
     {
         Mail_Service = _MailService;
