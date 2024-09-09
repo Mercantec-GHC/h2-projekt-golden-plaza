@@ -11,7 +11,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddTransient<RoomInitializationService>(); // insert dummy data
+// Activate this to insert dummy data
+// builder.Services.AddTransient<RoomInitializationService>(); // insert dummy data
 
 builder.Services.AddDbContext<ApplicationDBContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -54,11 +55,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 // Add dummy data
+// Activate this to insert dummy data
+/*
 using (var scope = app.Services.CreateScope())
 {
     var initializer = scope.ServiceProvider.GetRequiredService<RoomInitializationService>();
     initializer.InitializeRooms();
 }
+*/
 
 app.UseCors("AllowAll");
 
