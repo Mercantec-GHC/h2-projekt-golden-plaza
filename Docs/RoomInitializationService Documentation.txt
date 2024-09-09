@@ -1,0 +1,26 @@
+﻿RoomInitializationService
+
+
+The service is made to create dummy data in the database to add 2 rooms and their availability by creating booking objects for the rooms in the bookings table.
+
+
+* Checks if there are any rooms in the database (to avoid duplicates).
+If no rooms exist, it creates a list of Room objects with predefined data.
+
+
+* Saves the rooms to the database to generate IDs.
+
+
+* Generates availability (bookings) for each room using the GenerateRoomAvailability method.
+
+
+* Adds the generated bookings to the database and saves the changes.
+
+
+GenerateRoomAvailability(decimal basePrice, Room room):  
+
+
+* Generates a list of Booking objects for a given room.
+* Sets the availability for each day of the current year.
+* Adjusts the price for weekends by increasing it by 20%.
+* Returns the list of bookings.

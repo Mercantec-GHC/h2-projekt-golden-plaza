@@ -1,0 +1,84 @@
+﻿BookingController
+
+
+Web-API controller that Manages booking related operations by using EF (ApplicationDBContext) to interact with db.
+
+
+ApplicationDBContext 
+
+
+* Serves as the bridge between the application and the database, allowing for saving data and querying db.
+
+
+* Derived from from DbContext class from EF
+
+
+Methods
+
+
+GetBookings:  
+[HttpGet]
+
+
+* Retrieves all bookings from the database.
+
+
+* Returns a list of Booking objects.
+
+
+
+
+CheckAvailability:  
+[HttpGet("CheckAvailability")]
+
+
+* Checks room availability within a specified date range.
+
+
+* Returns available dates and total price if available, otherwise returns appropriate error messages.
+
+
+
+
+GetBooking:  
+[HttpGet("{id}")]
+
+
+* Retrieves a specific booking by its ID.
+* Returns the booking if found, otherwise returns a NotFound result.
+
+
+
+
+BookRoom:  
+[HttpPut("BookRoom")]
+
+
+* Books a room for a specified date range and customer.
+
+
+* Checks for room and customer existence, availability, and updates the booking status.
+* Returns success or error messages based on the operation's outcome.
+
+
+PostBooking:  
+[HttpPost]
+
+
+* Creates a new booking.
+
+
+* Validates the existence of the customer and room before adding the booking to the database.
+
+
+* Returns the created booking with a CreatedAtAction result.
+
+
+DeleteBooking:
+[HttpDelete("{id}")]
+
+
+* Deletes a booking by its ID.
+
+
+* Returns NoContent if successful, otherwise returns a NotFound result

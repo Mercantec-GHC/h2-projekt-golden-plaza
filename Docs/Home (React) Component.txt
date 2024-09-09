@@ -1,0 +1,40 @@
+﻿Home (React) Component 
+
+
+
+
+
+
+
+
+The home component fetches data from API: https://localhost:7207/api/Rooms and display the rooms in a mediacard component. Furthermore the component imports 2 images from assets and maps room Id to corresponding image.
+
+
+Dependencies
+
+
+* React
+* Home.css for styling
+* MediaCard component from ./Cards/CardRoom1.jsx
+* Images: suite.jpg and Deluxe.jpg from ../../assets/
+
+
+State
+
+
+* rooms: An array of room objects fetched from the API.
+
+
+Functions
+
+
+* useEffect: Fetches room data from the API when the component mounts.
+
+
+* getImageForRoom(roomId): Returns the image corresponding to the room ID. Defaults to image1 if the room ID is not found in the imageMap.
+
+
+API Endpoint
+
+
+* https://localhost:7207/api/Rooms: The endpoint from which room data is fetched.
