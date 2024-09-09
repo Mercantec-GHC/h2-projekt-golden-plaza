@@ -12,11 +12,11 @@ function App() {
     return (
         <>
             <ResponsiveAppBar/>
-            <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/signup" element={<Signup />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/contact" element={<Contact />} />
+            <Routes> {/* Uses Routes to navigate on the website */}
+                <Route path="/" element={<Home />} /> {/* Go to path "/", render the Home page */}
+                <Route path="/signup" element={<Signup />} /> {/* Go to path "/signup", render the Signup page */}
+                <Route path="/login" element={<Login />} /> {/* Go to path "/login", render the Login page */}
+                <Route path="/contact" element={<Contact />} /> {/* Go to path "/contact", render the Contact page */}
             </Routes>
 
         </>
