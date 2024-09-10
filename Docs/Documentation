@@ -1,0 +1,11 @@
+Connectionstring:
+For at forbinde til en given database skal der ændres connectionstring i filen appsetting.json, som er placeret i API folderen. Koden er baseret på brug af Postgres databaser, så det anbefales at den type benyttes.
+
+Mail:
+For at benytte den indbyggede mailfunktion, hvor der eksempelvis udsendes bekræftelse ved booking, skal der ændres mail settings i filen appsettings.json, som er placeret i API folderen.
+Udskift Host, Port, Name, EmailId, UserName og Password med de oplysninger, der passer med en given mail adresse.
+
+API:
+Link til API er følgende:
+Https: https://localhost:7207/swagger/index.html
+Http: http://localhost:5021/swagger/index.html
