@@ -27,9 +27,9 @@ namespace API.Controllers;
         [HttpGet("{id}")]
         public async Task<ActionResult<Room>> GetRoom(int id)
         {
-            var room = await _context.Rooms
+            var room = await _context.Rooms //Query the database for the room with the specified ID
                 .Include(r => r.Availabilities)  // Ensure availabilities are included
-                .FirstOrDefaultAsync(r => r.Id == id);
+                .FirstOrDefaultAsync(r => r.Id == id);// Use the FirstOrDefaultAsync method to retrieve the first room that matches the specified ID
 
             if (room == null)
             {
@@ -75,12 +75,12 @@ namespace API.Controllers;
         // POST: api/Rooms
         
         [HttpPost]
-        public async Task<ActionResult<Room>> PostRoom(Room room)
+        public async Task<ActionResult<Room>> PostRoom(Room room) 
         {
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetRoom), new { id = room.Id }, room);
+            return CreatedAtAction(nameof(GetRoom), new { id = room.Id }, room); //Returns the newly created room
         }
 
         // DELETE: api/Rooms/5
@@ -99,7 +99,7 @@ namespace API.Controllers;
             return NoContent();
         }
 
-        private bool RoomExists(int id)
+        private bool RoomExists(int id) //Helper method to check if a room with the specified ID exists
         {
             return _context.Rooms.Any(e => e.Id == id);
         }

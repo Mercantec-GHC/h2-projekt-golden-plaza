@@ -33,8 +33,8 @@ namespace API.Services
 
        public void InitializeRooms()
        {
-           // Check if there are any rooms in the database
-           if (!_context.Rooms.Any())
+           
+           if (!_context.Rooms.Any()) // If no rooms exist in db, create some
            {
                var rooms = new List<Room>
                {
@@ -62,17 +62,18 @@ namespace API.Services
                _context.SaveChanges();
 
 
-               // Now that rooms have been saved, generate bookings for each room
+               // Now that rooms have been saved, loop through rooms and generate bookings for each room
                foreach (var room in rooms)
                {
-                   room.Availabilities = GenerateRoomAvailability(room.PricePerNight, room);
+                   // Calls GenerateRoomAvailability method to create a list of booking objects
+                    room.Availabilities = GenerateRoomAvailability(room.PricePerNight, room); //Assigns the generated bookings to the Availabilities property of each room
                }
 
 
-               // Add bookings to the context
-               foreach (var room in rooms)
+               // Add bookings to the Dbcontext (bridge between the in-memory objects and the database)
+               foreach (var room in rooms) 
                {
-                   _context.Bookings.AddRange(room.Availabilities);
+                   _context.Bookings.AddRange(room.Availabilities); // Add all bookings for the room
                }
 
 
@@ -81,16 +82,16 @@ namespace API.Services
        }
 
 
-       private List<Booking> GenerateRoomAvailability(decimal basePrice, Room room)
+       private List<Booking> GenerateRoomAvailability(decimal basePrice, Room room) // Generate bookings for a room
        {
-           var availabilities = new List<Booking>();
+           var availabilities = new List<Booking>(); // List to store bookings
            DateTime startDate = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc);  // Set to UTC
            DateTime endDate = new DateTime(DateTime.Now.Year, 12, 31, 23, 59, 59, DateTimeKind.Utc);  // Set to UTC
 
 
-           for (DateTime date = startDate; date <= endDate; date = date.AddDays(1))
+           for (DateTime date = startDate; date <= endDate; date = date.AddDays(1)) // Loop through each day of the year
            {
-               decimal price = basePrice;
+               decimal price = basePrice; 
 
 
                // Adjust price for weekends etc.
@@ -100,7 +101,7 @@ namespace API.Services
                }
 
 
-               availabilities.Add(new Booking
+               availabilities.Add(new Booking 
                {
                    Date = date,
                    Price = price,
@@ -110,7 +111,7 @@ namespace API.Services
            }
 
 
-           return availabilities;
+           return availabilities; // Return all generated bookings
        }
    }
    

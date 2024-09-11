@@ -15,5 +15,5 @@ public class Room
      public List<string> Facilities { get; set; }
     
      // Navigation property to Booking
-     public List<Booking> Availabilities { get; set; }
+     public List<Booking> Availabilities { get; set; } 
 }

@@ -78,9 +78,9 @@ public class BookingController : ControllerBase
     }
 
     [HttpPut("BookRoom")]
-    public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int customerId)
+    public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int customerId) //customerId is the ID of the customer who is booking the room
     {
-        startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc);
+        startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc); // Needed UTC because postgres exspects that.
         endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
 
         if (startDate > endDate)
@@ -143,7 +143,7 @@ public class BookingController : ControllerBase
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking);
+        return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking); //Returns the newly created booking
     }
 
     // DELETE: api/Booking/5
