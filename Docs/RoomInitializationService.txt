@@ -1,0 +1,26 @@
+RoomInitializationService
+
+
+Description:
+
+
+Use this service to create rooms and room objects in your database.
+
+
+How to use it:
+
+
+* Make sure you don’t already have any rooms in your db table. 
+
+
+* Uncomment line 14 in program.cs - builder.Services.AddTransient<RoomInitializationService>();
+        
+
+
+* Uncomment code-line 57-61 in program.cs
+
+using (var scope = app.Services.CreateScope())
+{
+    var initializer = scope.ServiceProvider.GetRequiredService<RoomInitializationService>();
+    initializer.InitializeRooms();
+}
