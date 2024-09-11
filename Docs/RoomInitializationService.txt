@@ -4,7 +4,7 @@ RoomInitializationService
 Description:
 
 
-Use this service to create rooms and room objects in your database.
+Use this service to create rooms and booking objects in your database.
 
 
 How to use it:
