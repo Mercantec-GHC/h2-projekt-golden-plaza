@@ -5,6 +5,8 @@ Mail:
 To use the built-in mail function, where for example a confirmation is sent upon booking, the mail settings in the file appsettings.json, 
 located in the API folder, must be changed. Replace Host, Port, Name, EmailId, UserName, and Password with the information corresponding to a given email address.
 
+To use the contact formular in React, you need to change the following file: src/pages/Contact.jsx (Insert reply email on line 5)
+
 API:
 Links for the API is as follows:
 Https: https://localhost:7207/swagger/index.html
