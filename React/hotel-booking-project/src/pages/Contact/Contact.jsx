@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 const Contact = () => {
     // Set the default values
-    const [emailToId] = useState('allan@leeloo.dk');
+    const [emailToId] = useState('INSERT REPLY EMAIL HERE');
     const [emailToName] = useState('Support');
     const [emailSubject, setEmailSubject] = useState('');
     const [emailBody, setEmailBody] = useState('');
