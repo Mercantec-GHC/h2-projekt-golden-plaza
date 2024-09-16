@@ -1,6 +1,10 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-var api = builder.AddProject<Projects.API>("api");
+var dbserver = builder.AddPostgres("dbserver");
+var db = dbserver.AddDatabase("hoteldb");
+dbserver.WithDataVolume().WithPgAdmin();
+
+var api = builder.AddProject<Projects.API>("api").WithReference(db);
 
 builder.AddNpmApp("react", "../../React/hotel-booking-project")
     .WithReference(api)

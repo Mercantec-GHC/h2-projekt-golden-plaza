@@ -14,8 +14,7 @@ builder.Services.AddSwaggerGen();
 // Activate this to insert dummy data
 // builder.Services.AddTransient<RoomInitializationService>(); // insert dummy data
 
-builder.Services.AddDbContext<ApplicationDBContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.AddNpgsqlDbContext<ApplicationDBContext>("hoteldb");
 
 builder.Services.AddControllers();
 
@@ -63,6 +62,12 @@ using (var scope = app.Services.CreateScope())
     initializer.InitializeRooms();
 }
 */
+
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+    context.Database.Migrate();
+}
 
 app.UseCors("AllowAll");
 
