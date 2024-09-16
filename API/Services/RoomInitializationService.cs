@@ -36,29 +36,37 @@ namespace API.Services
            
            if (!_context.Rooms.Any()) // If no rooms exist in db, create some
            {
-               var rooms = new List<Room>
-               {
-                   new Room
-                   {
-                       Capacity = 2,
-                       RoomType = "Single",
-                       RoomNumber = 101,
-                       PricePerNight = 100m,
-                       Facilities = new List<string> { "WiFi", "TV" }
-                   },
-                   new Room
-                   {
-                       Capacity = 4,
-                       RoomType = "Double",
-                       RoomNumber = 102,
-                       PricePerNight = 150m,
-                       Facilities = new List<string> { "WiFi", "TV", "Mini Bar" }
-                   }
-               };
+                var rooms = new List<Room>
+{
+                    new Room
+                    {
+                        Capacity = 2,
+                        RoomType = new RoomType
+                    {
+                        RoomTypeName = "Deluxe",
+                        Tags = new List<string> { "Spacious", "Sea View" }
+                    },
+                        RoomNumber = 101,
+                        PricePerNight = 100m,
+                        Facilities = new List<string> { "WiFi", "TV" }
+                    },
+                new Room
+                    {
+                        Capacity = 4,
+                        RoomType = new RoomType
+                    {
+                        RoomTypeName = "Standard",
+                        Tags = new List<string> { "Cozy", "Mountain View" }
+                    },
+                        RoomNumber = 102,
+                        PricePerNight = 150m,
+                        Facilities = new List<string> { "WiFi", "TV", "Mini Bar" }
+                    }
+           };
 
 
-               // Save rooms to the database first to generate IDs
-               _context.Rooms.AddRange(rooms);
+                // Save rooms to the database first to generate IDs
+                _context.Rooms.AddRange(rooms);
                _context.SaveChanges();
 
 
