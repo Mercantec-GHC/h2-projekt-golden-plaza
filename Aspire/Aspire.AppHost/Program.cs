@@ -1,7 +1,14 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddProject<Projects.API>("api");
+var api = builder.AddProject<Projects.API>("api");
 
-builder.AddProject<Projects.Blazor>("blazor");
+builder.AddNpmApp("react", "../../React/hotel-booking-project")
+    .WithReference(api)
+    .WithEnvironment("BROWSER", "none")
+    .WithHttpEndpoint(env: "PORT")
+    .WithExternalHttpEndpoints()
+    .PublishAsDockerFile();
+
+//builder.AddProject<Projects.Blazor>("blazor");
 
 builder.Build().Run();
