@@ -12,6 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import FlareIcon from '@mui/icons-material/Flare';
+import { useAuth } from '../../Services/Auth/UserAuth.jsx';
 
 const pages = [
     { label: 'Contact', href: '/contact' },
@@ -19,11 +20,10 @@ const pages = [
     { label: 'Login', href: '/login' },
 ];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
+const auth = useAuth();
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
-
     const handleOpenNavMenu = (event) => {
         setAnchorElNav(event.currentTarget);
     };
@@ -38,6 +38,7 @@ function ResponsiveAppBar() {
     const handleCloseUserMenu = () => {
         setAnchorElUser(null);
     };
+    
 
     return (
         <AppBar

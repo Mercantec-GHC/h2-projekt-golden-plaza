@@ -43,7 +43,6 @@ namespace API.Controllers
                 Email = request.Email,
                 PasswordHash = Convert.ToBase64String(passwordHash),
                 PasswordSalt = Convert.ToBase64String(passwordSalt),
-                LoginStatus = "Active",  // Set initial login status to "Active".
                 RegisterDate = DateTime.UtcNow  // Store the current time as the registration date.
             };
 

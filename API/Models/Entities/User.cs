@@ -4,6 +4,6 @@ namespace API.Models.Entities;
 
 public class User
 { 
-    public Guid UserId { get; set; } = Guid.NewGuid();
+    public int UserId { get; set; }
     public DateTime RegisterDate { get; set; }
 }
