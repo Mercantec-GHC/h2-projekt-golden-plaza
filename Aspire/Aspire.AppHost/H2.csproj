@@ -27,6 +27,7 @@
   <Target Name="RestoreNpm" BeforeTargets="Build" Condition=" '$(DesignTimeBuild)' != 'true' ">
     <ItemGroup>
       <PackageJsons Include="..\..\React\hotel-booking-project\package.json" />
+      <PackageJsons Include="..\..\React\admin-panel\package.json" />
     </ItemGroup>
 
     <!-- Install npm packages if node_modules is missing -->
