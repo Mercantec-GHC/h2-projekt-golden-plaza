@@ -21,7 +21,7 @@ const pages = [
     { label: 'Login', href: '/login' },
 ];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-const auth = useAuth();
+//const auth = useAuth();
 function ResponsiveAppBar() {
     const [anchorElNav, setAnchorElNav] = React.useState(null);
     const [anchorElUser, setAnchorElUser] = React.useState(null);
