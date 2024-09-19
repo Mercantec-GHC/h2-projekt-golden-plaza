@@ -17,6 +17,7 @@ import { useAuth } from '../../Services/Auth/UserAuth.jsx';
 const pages = [
     { label: 'Contact', href: '/contact' },
     { label: 'Signup', href: '/signup' },
+    { label: 'Tickets', href: '/ticket' },
     { label: 'Login', href: '/login' },
 ];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];

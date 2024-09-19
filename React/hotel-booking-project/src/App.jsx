@@ -4,6 +4,7 @@ import Login from "./pages/Login/Login.jsx";
 import Signup from "./pages/Signup/Signup.jsx";
 import Home from "./pages/Home/Home.jsx";
 import Contact from "./pages/Contact/Contact.jsx";
+import Ticket from "./pages/Contact/Tickets.jsx";
 import ResponsiveAppBar from "./pages/Navbar/Navbar.jsx";
 import AuthProvider from "./Services/Auth/UserAuth.jsx";
 
@@ -19,6 +20,7 @@ function App() {
                 <Route path="/signup" element={<Signup />} /> {/* Go to path "/signup", render the Signup page */}
                 <Route path="/login" element={<Login />} /> {/* Go to path "/login", render the Login page */}
                 <Route path="/contact" element={<Contact />} /> {/* Go to path "/contact", render the Contact page */}
+                <Route path="/ticket" element={<Ticket />} /> {/* Go to path "/Ticket", render the Ticket page */}
             </Routes>
             </AuthProvider>
         </>
