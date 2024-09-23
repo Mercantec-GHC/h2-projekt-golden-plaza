@@ -11,6 +11,9 @@ import Box from '@mui/material/Box';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
+import { useContext } from 'react';
+import { UserContext } from '../../../stateproviders/UserContext';
+
 
 export default function MediaCard({ roomId, title, description, image, facilities }) {
     const [open, setOpen] = useState(false);
@@ -19,11 +22,14 @@ export default function MediaCard({ roomId, title, description, image, facilitie
     const [email, setEmail] = useState('');
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const [totalPrice, setTotalPrice] = useState(null);
+    
+    const {isLogin, token} = useContext(UserContext);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
     const checkAvailability = async () => {
+
         if (!startDate || !endDate) {
             setAvailabilityMessage('Please select both check-in and check-out dates.');
             return;
@@ -168,7 +174,9 @@ export default function MediaCard({ roomId, title, description, image, facilitie
                 aria-labelledby="modal-title"
                 aria-describedby="modal-description"
             >
-                <Box
+                {
+                    (
+                    (isLogin) ? <Box
                     sx={{
                         position: 'absolute',
                         top: '50%',
@@ -226,7 +234,18 @@ export default function MediaCard({ roomId, title, description, image, facilitie
                     <Button onClick={bookRoom} variant="contained" color="secondary">
                         Book Room
                     </Button>
-                </Box>
+                </Box> 
+                : (
+                    <>
+                <Box>
+                    <Typography variant="h6" component="h2">
+                        Please login to book a room.
+                    </Typography>
+                </Box> 
+                
+                </>)
+                    )
+                    }
             </Modal>
         </Card>
     );

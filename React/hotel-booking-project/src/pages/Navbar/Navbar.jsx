@@ -12,7 +12,7 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import FlareIcon from '@mui/icons-material/Flare';
-import { useAuth } from '../../Services/Auth/UserAuth.jsx';
+//import { useAuth } from '../../Services/Auth/UserAuth.jsx';
 
 const pages = [
     { label: 'Contact', href: '/contact' },

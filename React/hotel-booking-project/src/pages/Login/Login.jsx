@@ -4,7 +4,7 @@ import FormTitle from "../../components/Signup & Login/FormTitle.jsx";
 import FormButton from "../../components/Signup & Login/FormButton.jsx";
 import { useState } from 'react'
 import axios from 'axios';
-import { useAuth } from '../../Services/Auth/UserAuth.jsx';
+//import { useAuth } from '../../Services/Auth/UserAuth.jsx';
 
 function Login() {
     const [email, setEmail] = useState(''); /* useState to keep track of the e-mail provided by the user */
