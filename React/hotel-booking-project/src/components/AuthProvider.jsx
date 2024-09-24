@@ -16,7 +16,10 @@ function AuthProvider({ children }) {
             clientId: "golden-plaza-frontend",
         });
         keycloakRef.current = client;
-        setIsLoading(false);
+        client.init({ onLoad: 'check-sso' }).then(authenticated => {
+            setIsInitialized(authenticated);
+            setIsLoading(false);
+        });
     }, []);
 
     const init = () => {

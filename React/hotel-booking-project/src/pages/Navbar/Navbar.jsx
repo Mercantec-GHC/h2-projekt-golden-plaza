@@ -28,10 +28,6 @@ function ResponsiveAppBar() {
 
     const {keycloak, setKeycloak } = React.useContext(KeycloakContext);
 
-    const [user] = React.useState(keycloak);
-
-    console.log(keycloak.authenticated);
-
 
 
 
