@@ -12,7 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
 import { useContext } from 'react';
-import { UserContext } from '../../../stateproviders/UserContext';
+import { KeycloakContext } from '../../../App';
 
 
 export default function MediaCard({ roomId, title, description, image, facilities }) {
@@ -23,7 +23,8 @@ export default function MediaCard({ roomId, title, description, image, facilitie
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const [totalPrice, setTotalPrice] = useState(null);
     
-    const {isLogin, token} = useContext(UserContext);
+    const { keycloak } = useContext(KeycloakContext);
+    const [isLogin] = useState(keycloak.authenticated);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
