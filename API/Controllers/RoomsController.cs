@@ -1,4 +1,5 @@
 using API.Data;
+using API.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models.Entities;
@@ -28,7 +29,7 @@ namespace API.Controllers;
         public async Task<ActionResult<Room>> GetRoom(int id)
         {
             var room = await _context.Rooms //Query the database for the room with the specified ID
-                .Include(r => r.Availabilities)  // Ensure availabilities are included
+                //.Include(r => r.Availabilities)  // Ensure availabilities are included
                 .FirstOrDefaultAsync(r => r.Id == id);// Use the FirstOrDefaultAsync method to retrieve the first room that matches the specified ID
 
             if (room == null)
@@ -75,8 +76,17 @@ namespace API.Controllers;
         // POST: api/Rooms
         
         [HttpPost]
-        public async Task<ActionResult<Room>> PostRoom(Room room) 
+        public async Task<ActionResult<Room>> PostRoom(RoomDTO roomDTO) 
         {
+            var room = new Room
+            {
+                Capacity = roomDTO.Capacity,
+                RoomType = roomDTO.RoomType,
+                RoomNumber = roomDTO.RoomNumber,
+                PricePerNight = roomDTO.PricePerNight,
+                Facilities = roomDTO.Facilities
+            };    
+
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 

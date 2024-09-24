@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.Models.Entities;
 
@@ -13,7 +14,8 @@ public class Customer : User
     public string PasswordHash { get; set; }
     public string PasswordSalt { get; set; }
     public string Address { get; set; }
-    
+
     // Navigation property to Booking
-    public List<Booking> Bookings { get; set; }
+    [JsonIgnore]
+    public List<Booking>? Bookings { get; set; }
 }

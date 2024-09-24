@@ -1,4 +1,5 @@
 using API.Data;
+using API.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Models.Entities;
@@ -78,7 +79,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPut("BookRoom")]
-    public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int customerId) //customerId is the ID of the customer who is booking the room
+    public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int UserId) //customerId is the ID of the customer who is booking the room
     {
         startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc); // Needed UTC because postgres exspects that.
         endDate = DateTime.SpecifyKind(endDate, DateTimeKind.Utc);
@@ -90,7 +91,7 @@ public class BookingController : ControllerBase
 
         // Load room and customer based on their IDs
         var room = await _context.Rooms.FindAsync(roomId);
-        var customer = await _context.Customers.FindAsync(customerId);
+        var customer = await _context.Customers.FindAsync(UserId);
 
         if (room == null || customer == null)
         {
@@ -121,30 +122,44 @@ public class BookingController : ControllerBase
         return Ok(new { message = "Room booked successfully.", roomId, startDate, endDate });
     }
 
-
-
-
-// POST: api/Booking
+    // POST: api/Booking
     [HttpPost]
-    public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+    public async Task<ActionResult<Booking>> PostBooking(BookingDTO bookingDTO)
     {
-        var customer = await _context.Customers.FindAsync(booking.CustomerId);
+        // Check if the customer exists
+        var customer = await _context.Customers.FindAsync(bookingDTO.UserId);
         if (customer == null)
         {
             return NotFound(new { message = "Customer not found" });
         }
 
-        var room = await _context.Rooms.FindAsync(booking.RoomId);
+        // Check if the room exists
+        var room = await _context.Rooms.FindAsync(bookingDTO.RoomId);
         if (room == null)
         {
             return NotFound(new { message = "Room not found" });
         }
 
+        // Create a new Booking entity
+        var booking = new Booking
+        {
+            Date = bookingDTO.Date,
+            Price = bookingDTO.Price,
+            IsReserved = bookingDTO.IsReserved,
+            Customer = customer, // Link the customer
+            Room = room,         // Link the room
+            RoomId = bookingDTO.RoomId,
+            UserId = bookingDTO.UserId // Assign CustomerId
+        };
+
+        // Add the booking to the context and save
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking); //Returns the newly created booking
+        // Return the newly created booking with its ID
+        return CreatedAtAction(nameof(GetBooking), new { id = booking.Id }, booking); // Return the Booking object
     }
+
 
     // DELETE: api/Booking/5
     [HttpDelete("{id}")]

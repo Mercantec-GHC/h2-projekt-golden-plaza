@@ -16,7 +16,7 @@ using API.Models.Entities;
            initializer.InitializeRooms();
        }
 */
-
+/*
 namespace API.Services
 {
     
@@ -124,3 +124,4 @@ namespace API.Services
    }
    
 }
+*/

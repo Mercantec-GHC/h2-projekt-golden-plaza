@@ -1,4 +1,5 @@
 using API.Data;
+using API.DTO;
 using API.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -40,8 +41,16 @@ namespace API.Controllers
 
         // POST: api/Customers
         [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(Customer customer)
+        public async Task<ActionResult<Customer>> PostCustomer(CustomerDTO customerDTO)
         {
+            var customer = new Customer
+            {
+                UserName = customerDTO.UserName,
+                Email = customerDTO.Email,
+                PasswordHash = customerDTO.PasswordHash,
+                PasswordSalt = customerDTO.PasswordSalt,
+                Address = customerDTO.Address
+            };
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
 
