@@ -53,6 +53,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
 // Add dummy data
 // Activate this to insert dummy data
 /*
@@ -63,10 +64,20 @@ using (var scope = app.Services.CreateScope())
 }
 */
 
+// Handle migration and ensure the database is up to date
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
-    context.Database.Migrate();
+    try
+    {
+        context.Database.Migrate(); // Apply pending migrations
+    }
+    catch (Exception ex)
+    {
+        // Log or handle the exception as needed
+        Console.WriteLine($"Migration failed: {ex.Message}");
+        // Optionally, log this error using a logging framework like Serilog or NLog
+    }
 }
 
 app.UseCors("AllowAll");
