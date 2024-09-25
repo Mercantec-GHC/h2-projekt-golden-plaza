@@ -6,15 +6,19 @@ dbserver.WithDataVolume().WithPgAdmin();
 
 
 // if keycloak fails, add the port number to it like this
-// var keycloak = builder.AddKeycloakContainer("keycloak", port: 8080).WithDataVolume();
+var keycloak = builder.AddKeycloakContainer("keycloak", port: 8080).WithDataVolume();
 // default login is admin admin ( username: admin, paswword: admin ) can be changed
-var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume();
+//var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume();
 
-var api = builder.AddProject<Projects.API>("api").WithReference(db);
+//adding realm
+var realm = keycloak.AddRealm("hotel");
+
+var api = builder.AddProject<Projects.API>("api").WithReference(db).WithReference(keycloak).WithReference(realm);
 
 builder.AddNpmApp("frontend", "../../React/hotel-booking-project")
     .WithReference(api)
     .WithReference(keycloak)
+    .WithReference(realm)
     .WithEnvironment("BROWSER", "none")
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()
@@ -23,6 +27,7 @@ builder.AddNpmApp("frontend", "../../React/hotel-booking-project")
 builder.AddNpmApp("admin-panel", "../../React/admin-panel")
     .WithReference(api)
     .WithReference(keycloak)
+    .WithReference(realm)
     .WithEnvironment("BROWSER", "none")
     .WithHttpEndpoint(env: "PORT")
     .WithExternalHttpEndpoints()

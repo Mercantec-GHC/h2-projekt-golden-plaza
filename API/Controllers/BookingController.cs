@@ -19,6 +19,7 @@ public class BookingController : ControllerBase
 
     // GET: api/Bookings
     [HttpGet]
+    [Authorize]
     public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
     {
         return await _context.Bookings.ToListAsync();
