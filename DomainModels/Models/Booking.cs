@@ -1,4 +1,4 @@
-namespace API.Models.Entities;
+namespace DomainModels.Models.Entities;
 
 public class Booking
 {
@@ -18,7 +18,7 @@ public class Booking
     public int RoomId { get; set; }
 
     // Foreign key to Customer
-    public int? CustomerId { get; set; }
+    public int? UserId { get; set; }
 }
 
 // Foreign Key = Database relationship 

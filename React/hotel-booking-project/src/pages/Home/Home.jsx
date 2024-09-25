@@ -11,12 +11,35 @@ const Home = () => {
         2: image2
     };
 
+
     useEffect(() => { // Fetch rooms from the API
         fetch('https://localhost:7207/api/Rooms')
             .then(response => response.json())
             .then(data => setRooms(data))
             .catch(error => console.error('Error fetching rooms:', error));
     }, []);
+
+    // Hardcoded rooms for demonstration purposes
+    // useEffect(() => {
+    //     setRooms([
+    //         {
+    //             id: 1,
+    //             roomNumber: 101,
+    //             roomType: 'Suite',
+    //             capacity: 2,
+    //             pricePerNight: 200,
+    //             facilities: ['TV', 'Mini Bar', 'Air Conditioning', 'Ensuite Bathroom']
+    //         },
+    //         {
+    //             id: 2,
+    //             roomNumber: 201,
+    //             roomType: 'Deluxe',
+    //             capacity: 3,
+    //             pricePerNight: 150,
+    //             facilities: ['TV', 'Mini Bar', 'Air Conditioning', 'Ensuite Bathroom']
+    //         }
+    //     ]);
+    // }, []);
 
     const getImageForRoom = (roomId) => { // Get the image for a specific room
         return imageMap[roomId] || image1;

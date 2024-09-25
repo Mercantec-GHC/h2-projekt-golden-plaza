@@ -1,5 +1,5 @@
 ﻿using API.Data;
-using API.Models.Entities;
+using DomainModels.Models.Entities;
 
 //NOT IN USE. WAS USED TO CREATE DUMMY DATA
 
@@ -16,7 +16,7 @@ using API.Models.Entities;
            initializer.InitializeRooms();
        }
 */
-
+/*
 namespace API.Services
 {
     
@@ -124,3 +124,4 @@ namespace API.Services
    }
    
 }
+*/

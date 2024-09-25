@@ -1,4 +1,6 @@
-﻿namespace API.Models.Entities
+﻿using System.Text.Json.Serialization;
+
+namespace DomainModels.Models.Entities
 {
     public class Room
     { 
@@ -7,8 +9,10 @@
         public RoomType RoomType { get; set; }
         public required int RoomNumber { get; set; }
         public decimal PricePerNight { get; set; }
-        public List<string> Facilities { get; set; }
+        public List<string>? Facilities { get; set; }
         // Navigation property to Booking
-        public List<Booking> Availabilities { get; set; } 
+
+        [JsonIgnore]
+        public List<Booking>? Availabilities { get; set; } 
     }
 }

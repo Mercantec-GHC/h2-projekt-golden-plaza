@@ -1,5 +1,5 @@
 ﻿using API.Configuration;
-using API.Models.Entities;
+using DomainModels.Models.Entities;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;

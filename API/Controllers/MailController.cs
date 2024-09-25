@@ -1,4 +1,4 @@
-﻿using API.Models.Entities;
+﻿using DomainModels.Models.Entities;
 using API.Services;
 using Microsoft.AspNetCore.Mvc;
 

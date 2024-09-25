@@ -1,5 +1,5 @@
 ﻿using API.Data;
-using API.Models.Entities;
+using DomainModels.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
