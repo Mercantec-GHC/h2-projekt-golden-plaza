@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using API.Data;
 using DomainModels.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers
 {
@@ -43,6 +44,7 @@ namespace API.Controllers
         }
         // adding a new ticket
         [HttpPost]
+        [Authorize]
         public IActionResult Post([FromBody] Ticket ticket)
         {
             _context.Tickets.Add(ticket);

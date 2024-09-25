@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
+import { KeycloakContext } from '../../App';
 
 // Enum for ticket status
 const StatusEnum = {
@@ -14,6 +15,7 @@ const Tickets = () => {
     const [editTicket, setEditTicket] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true); // Track loading state
+    const [keycloak] = useContext(KeycloakContext);
 
     // Set Axios base URL (optional if API base is the same across the app)
     axios.defaults.baseURL = 'https://localhost:7207/api'; // Adjust to your backend's actual URL
@@ -36,7 +38,13 @@ const Tickets = () => {
 
     const addTicket = async () => {
         try {
-            const response = await axios.post('/Ticket', newTicket);
+            let config = {
+                headers: {
+                    accept: "application/json",
+                    authorization: `Bearer ${keycloak.token}`
+                }
+            }
+            const response = await axios.post('/Ticket',newTicket, config);
             setTickets([...tickets, response.data]);
             setNewTicket({ title: '', description: '', status: 0 });
         } catch (error) {
