@@ -1,5 +1,5 @@
 ﻿using API.Data;
-using API.Models.Entities;
+using DomainModels.Models.Entities;
 
 //NOT IN USE. WAS USED TO CREATE DUMMY DATA
 

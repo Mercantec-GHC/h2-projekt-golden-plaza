@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace API.Models.Entities
+namespace DomainModels.Models.Entities
 {
     public class Room
     { 

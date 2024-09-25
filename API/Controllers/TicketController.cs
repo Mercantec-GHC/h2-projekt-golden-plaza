@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using API.Data;
-using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.ComponentModel;
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using API.Models.Entities;
+using DomainModels.Models.Entities;
 
 namespace API.Controllers
 {

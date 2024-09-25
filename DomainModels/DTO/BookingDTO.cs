@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations; // Ensure you have the required namespace
 
-namespace API.DTO
+namespace DomainModels.DTO
 {
     public class BookingDTO
     {

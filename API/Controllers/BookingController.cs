@@ -1,8 +1,8 @@
 using API.Data;
-using API.DTO;
+using DomainModels.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API.Models.Entities;
+using DomainModels.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
