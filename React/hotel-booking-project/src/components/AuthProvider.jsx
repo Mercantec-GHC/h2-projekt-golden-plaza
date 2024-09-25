@@ -13,7 +13,7 @@ function AuthProvider({ children }) {
         const client = new Keycloak({
             url: "http://localhost:8080/",
             realm: "golden-plaza",
-            clientId: "golden-plaza-frontend",
+            clientId: "golden-plaza",
         });
         keycloakRef.current = client;
         client.init({ onLoad: 'check-sso' }).then(authenticated => {

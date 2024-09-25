@@ -42,7 +42,12 @@ function ResponsiveAppBar() {
         setAnchorElNav(null);
     };
 
-    const handleCloseUserMenu = () => {
+    const handleCloseUserMenu = (setting) => {
+
+        if (setting == 'Logout') {
+            keycloak.logout();
+        }
+
         setAnchorElUser(null);
     };
     
@@ -193,7 +198,7 @@ function ResponsiveAppBar() {
                     >
                         {settings.map((setting) => {
                             
-                                return <MenuItem key={setting} onClick={handleCloseUserMenu}>
+                                return <MenuItem key={setting} onClick={() => {handleCloseUserMenu(setting)}}>
                                     <Typography sx={{ textAlign: 'center', color: 'rgb(180 155 99)' }}>{setting}</Typography>
                                 </MenuItem>
                             
