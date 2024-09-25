@@ -24,8 +24,9 @@ function AuthProvider({ children }) {
 
     const init = () => {
         if (isInitialized) return Promise.resolve();
-        return keycloakRef.current.init({ onLoad: 'login-required' }).then(() => {
-            setIsInitialized(true);
+
+        return keycloakRef.current.login().then(() => {
+            setIsInitialized(keycloakRef.current.authenticated);
         });
     };
 
