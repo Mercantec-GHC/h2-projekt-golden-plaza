@@ -80,6 +80,7 @@ public class BookingController : ControllerBase
     }
 
     [HttpPut("BookRoom")]
+    [Authorize]
     public async Task<IActionResult> BookRoom(int roomId, DateTime startDate, DateTime endDate, int UserId) //customerId is the ID of the customer who is booking the room
     {
         startDate = DateTime.SpecifyKind(startDate, DateTimeKind.Utc); // Needed UTC because postgres exspects that.
@@ -125,6 +126,7 @@ public class BookingController : ControllerBase
 
     // POST: api/Booking
     [HttpPost]
+    [Authorize]
     public async Task<ActionResult<Booking>> PostBooking(BookingDTO bookingDTO)
     {
         // Check if the customer exists
@@ -164,6 +166,7 @@ public class BookingController : ControllerBase
 
     // DELETE: api/Booking/5
     [HttpDelete("{id}")]
+    [Authorize]
     public async Task<IActionResult> DeleteBooking(int id)
     {
         var booking = await _context.Bookings.FindAsync(id);

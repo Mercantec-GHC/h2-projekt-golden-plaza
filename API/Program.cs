@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Security.Claims;
 using Keycloak.AuthServices.Common;
 using Keycloak.AuthServices.Authentication;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,28 +21,21 @@ builder.Services.AddSwaggerGen(
         options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory,
         $"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
         options.SwaggerDoc("v1", new OpenApiInfo { Title = "Hotel API", Version = "v1" });
-        var keycloakOptions = builder.Configuration.GetKeycloakOptions<KeycloakAuthenticationOptions>();
-        options.AddSecurityDefinition("oidc", new OpenApiSecurityScheme
-        {
-            Type = SecuritySchemeType.OpenIdConnect,
-            Name = "oauth2",
-            OpenIdConnectUrl = new Uri(keycloakOptions.OpenIdConnectUrl!),
-/*            Flows = new OpenApiOAuthFlows
+        var keycloakOptions = builder.Configuration.GetKeycloakOptions<KeycloakAuthenticationOptions>()!;
+
+        options.AddSecurityDefinition(
+            "oidc",
+            new OpenApiSecurityScheme
             {
-                Implicit = new OpenApiOAuthFlow
-                {
-                    AuthorizationUrl = new Uri(builder.Configuration["Keycloak:AuthorizationUrl"]),
-                    Scopes = new Dictionary<string, string>
-                    {
-                        { "openid", "openid" },
-                        { "profile", "profile" }
-                    }
-                }
+                Name = "oauth2",
+                Type = SecuritySchemeType.OpenIdConnect,
+                OpenIdConnectUrl = new Uri(keycloakOptions.OpenIdConnectUrl!)
             }
-*/
-        });
-        options.AddSecurityRequirement(new OpenApiSecurityRequirement
-        {
+        );
+
+        options.AddSecurityRequirement(
+            new OpenApiSecurityRequirement
+            {
             {
                 new OpenApiSecurityScheme
                 {
@@ -49,16 +43,12 @@ builder.Services.AddSwaggerGen(
                     {
                         Type = ReferenceType.SecurityScheme,
                         Id = "oidc"
-                    },
-                    /*
-                    In = ParameterLocation.Header,
-                    Name = "Bearer",
-                    Scheme = "Bearer"
-                    */
+                    }
                 },
                 Array.Empty<string>()
             }
-        });
+            }
+        );
     });
 
 // Activate this to insert dummy data

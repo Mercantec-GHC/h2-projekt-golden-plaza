@@ -18,6 +18,7 @@ namespace API.Controllers
         }
         //fetch all tickets
         [HttpGet]
+        [Authorize]
         public IActionResult GetAll()
         {
             var ticket = _context.Tickets.ToList();
@@ -53,6 +54,7 @@ namespace API.Controllers
         }
         // updating an already existing ticket, this can also be a part of the message/reply feature for now
         [HttpPut]
+        [Authorize]
         public IActionResult Update([FromBody] Ticket ticket)
         {
             _context.Tickets.Update(ticket);
@@ -61,6 +63,7 @@ namespace API.Controllers
         }
         // removing/deleting an existing ticket, may want to do so in another way in the future, where it instead stores the ticket
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(int id)
         {
             var ticket = _context.Tickets.Find(id);

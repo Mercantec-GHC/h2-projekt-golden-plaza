@@ -11,7 +11,7 @@ var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume().WithImp
 //var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume();
 
 //adding realm
-var realm = keycloak.AddRealm("Test");
+var realm = keycloak.AddRealm("golden-plaza");
 
 var api = builder.AddProject<Projects.API>("api").WithReference(db).WithReference(keycloak).WithReference(realm);
 
