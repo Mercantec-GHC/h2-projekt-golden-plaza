@@ -3,6 +3,7 @@ using API.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DomainModels.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
 
@@ -43,6 +44,7 @@ namespace API.Controllers;
 
         // PUT: api/Rooms/5
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutRoom(int id, Room room)
         {
             if (id != room.Id)
@@ -76,6 +78,7 @@ namespace API.Controllers;
         // POST: api/Rooms
         
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Room>> PostRoom(RoomDTO roomDTO) 
         {
             var room = new Room
@@ -95,6 +98,7 @@ namespace API.Controllers;
 
         // DELETE: api/Rooms/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteRoom(int id)
         {
             var room = await _context.Rooms.FindAsync(id);

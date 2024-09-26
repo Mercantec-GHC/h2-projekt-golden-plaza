@@ -16,7 +16,7 @@ function AuthProvider({ children }) {
             clientId: "golden-plaza",
         });
         keycloakRef.current = client;
-        client.init({ onLoad: 'check-sso' }).then(authenticated => {
+        client.init({ onLoad: 'check-sso', flow: 'implicit' }).then(authenticated => {
             setIsInitialized(authenticated);
             setIsLoading(false);
         });
