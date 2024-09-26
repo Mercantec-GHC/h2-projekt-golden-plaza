@@ -17,7 +17,6 @@ import { KeycloakContext } from '../../App';
 const pages = [
     { label: 'Contact', href: '/contact' },
     { label: 'Signup', href: '/signup' },
-    { label: 'Booking', href: '/booking' },
     { label: 'Tickets', href: '/ticket' },
     { label: 'Login', href: '/login' },
 ];

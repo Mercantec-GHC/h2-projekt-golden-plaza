@@ -23,7 +23,7 @@ namespace API.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Booking", b =>
+            modelBuilder.Entity("API.Models.Entities.Booking", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -31,14 +31,11 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CheckIn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CheckOut")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<int>("CustomerUserId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsReserved")
                         .HasColumnType("boolean");
@@ -61,7 +58,7 @@ namespace API.Migrations
                     b.ToTable("Bookings");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Department", b =>
+            modelBuilder.Entity("API.Models.Entities.Department", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,7 +75,7 @@ namespace API.Migrations
                     b.ToTable("Department");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Room", b =>
+            modelBuilder.Entity("API.Models.Entities.Room", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -108,7 +105,7 @@ namespace API.Migrations
                     b.ToTable("Rooms");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.RoomType", b =>
+            modelBuilder.Entity("API.Models.Entities.RoomType", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -125,7 +122,7 @@ namespace API.Migrations
                     b.ToTable("RoomType");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Ticket", b =>
+            modelBuilder.Entity("API.Models.Entities.Ticket", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -149,7 +146,7 @@ namespace API.Migrations
                     b.ToTable("Tickets");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.User", b =>
+            modelBuilder.Entity("API.Models.Entities.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -174,9 +171,9 @@ namespace API.Migrations
                     b.UseTphMappingStrategy();
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Customer", b =>
+            modelBuilder.Entity("API.Models.Entities.Customer", b =>
                 {
-                    b.HasBaseType("DomainModels.Models.Entities.User");
+                    b.HasBaseType("API.Models.Entities.User");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -201,9 +198,9 @@ namespace API.Migrations
                     b.HasDiscriminator().HasValue("Customer");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Employee", b =>
+            modelBuilder.Entity("API.Models.Entities.Employee", b =>
                 {
-                    b.HasBaseType("DomainModels.Models.Entities.User");
+                    b.HasBaseType("API.Models.Entities.User");
 
                     b.Property<int>("DepartmentId")
                         .HasColumnType("integer");
@@ -224,15 +221,15 @@ namespace API.Migrations
                     b.HasDiscriminator().HasValue("Employee");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Booking", b =>
+            modelBuilder.Entity("API.Models.Entities.Booking", b =>
                 {
-                    b.HasOne("DomainModels.Models.Entities.Customer", "Customer")
+                    b.HasOne("API.Models.Entities.Customer", "Customer")
                         .WithMany("Bookings")
                         .HasForeignKey("CustomerUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DomainModels.Models.Entities.Room", "Room")
+                    b.HasOne("API.Models.Entities.Room", "Room")
                         .WithMany("Availabilities")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -243,9 +240,9 @@ namespace API.Migrations
                     b.Navigation("Room");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Room", b =>
+            modelBuilder.Entity("API.Models.Entities.Room", b =>
                 {
-                    b.HasOne("DomainModels.Models.Entities.RoomType", "RoomType")
+                    b.HasOne("API.Models.Entities.RoomType", "RoomType")
                         .WithMany()
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -254,9 +251,9 @@ namespace API.Migrations
                     b.Navigation("RoomType");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Employee", b =>
+            modelBuilder.Entity("API.Models.Entities.Employee", b =>
                 {
-                    b.HasOne("DomainModels.Models.Entities.Department", "Department")
+                    b.HasOne("API.Models.Entities.Department", "Department")
                         .WithMany()
                         .HasForeignKey("DepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -265,12 +262,12 @@ namespace API.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Room", b =>
+            modelBuilder.Entity("API.Models.Entities.Room", b =>
                 {
                     b.Navigation("Availabilities");
                 });
 
-            modelBuilder.Entity("DomainModels.Models.Entities.Customer", b =>
+            modelBuilder.Entity("API.Models.Entities.Customer", b =>
                 {
                     b.Navigation("Bookings");
                 });
