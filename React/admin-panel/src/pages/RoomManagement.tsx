@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Room, RoomType } from "../interfaces/room";
-import axios from "axios";
+import axios, { AxiosResponse } from "axios";
 import {
   Table,
   TableBody,
@@ -21,7 +21,9 @@ import {
   InputLabel,
   Chip,
   Box,
+  capitalize,
 } from "@mui/material";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 
 const RoomManagement: React.FC = () => {
   axios.defaults.baseURL = "https://localhost:7207";
@@ -34,16 +36,60 @@ const RoomManagement: React.FC = () => {
   const [currentRoom, setCurrentRoom] = useState<Partial<Room>>({});
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  const columns: GridColDef[] = [
+    { field: "roomNumber", headerName: "Room Number", width: 130 },
+    { field: "capacity", headerName: "Capacity", width: 100 },
+    {
+      field: "roomType",
+      headerName: "Room Type",
+      width: 150,
+      valueGetter: (value, row: Room) =>
+        capitalize(row.roomType?.roomTypeName) || "ERROR",
+    },
+    { field: "pricePerNight", headerName: "Price Per Night", width: 150 },
+    {
+      field: "facilities",
+      headerName: "Facilities",
+      width: 200,
+      valueGetter: (value, row: Room) => row.facilities?.join(", ") || "",
+    },
+    {
+      field: "actions",
+      headerName: "Actions",
+      width: 150,
+      sortable: false,
+      filterable: false,
+      renderCell: (params) => (
+        <>
+          <Button
+            color="primary"
+            size="small"
+            onClick={() => handleEditClick(params.row)}
+          >
+            Edit
+          </Button>
+          <Button
+            color="secondary"
+            size="small"
+            onClick={() => handleDelete(params.row.id)}
+          >
+            Delete
+          </Button>
+        </>
+      ),
+    },
+  ];
+
   useEffect(() => {
     fetchRooms();
-    // fetchRoomTypes();
+    fetchRoomTypes();
     // fetchFacilities();
   }, []);
 
   // Fetch Rooms
   const fetchRooms = async () => {
     try {
-      const response = await axios.get<Room[]>("/api/Rooms");
+      const response = await axios.get<Room[]>("/api/Room");
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -53,16 +99,11 @@ const RoomManagement: React.FC = () => {
   // Fetch Room Types
   const fetchRoomTypes = async () => {
     try {
-      const response = await axios.get<RoomType[]>("/api/roomTypes");
+      const response = await axios.get<RoomType[]>("/api/RoomType");
       setRoomTypes(response.data);
     } catch (error) {
       console.error("Error fetching room types:", error);
       // Optionally, define static room types if the API call fails
-      setRoomTypes([
-        { id: 1, roomTypeName: "Single" },
-        { id: 2, roomTypeName: "Double" },
-        { id: 3, roomTypeName: "Suite" },
-      ]);
     }
   };
 
@@ -138,24 +179,36 @@ const RoomManagement: React.FC = () => {
       };
 
       if (isEditing && currentRoom.id) {
-        await axios.put(`/api/rooms/${currentRoom.id}`, roomData);
+        console.log("Updating room:", roomData);
+        console.log("Room ID:", roomData.id);
+        console.log("Endpoint used:", "/api/room/" + currentRoom.id);
+        await axios.put(`/api/room/${currentRoom.id}`, roomData);
       } else {
-        await axios.post("/api/rooms", roomData);
+        await axios.post("/api/room", roomData);
       }
       fetchRooms();
       handleDialogClose();
-    } catch (error) {
-      console.error("Error saving room:", error);
+    } catch (error: any) {
+      // If the error is a 401 Unauthorized handle it here
+      if (error.response.status === 401) {
+        console.error("Unauthorized access");
+      } else {
+        console.error("Error saving room:", error);
+      }
     }
   };
 
   // Handle Delete Room
   const handleDelete = async (id: number) => {
     try {
-      await axios.delete(`/api/rooms/${id}`);
+      await axios.delete(`/api/room/${id}`);
       fetchRooms();
-    } catch (error) {
-      console.error("Error deleting room:", error);
+    } catch (error: any) {
+      if (error.response.status === 401) {
+        console.error("Unauthorized access");
+      } else {
+        console.error("Error deleting room:", error);
+      }
     }
   };
 
@@ -266,37 +319,22 @@ const RoomManagement: React.FC = () => {
       >
         Add Room
       </Button>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Room Number</TableCell>
-            <TableCell>Capacity</TableCell>
-            <TableCell>Room Type</TableCell>
-            <TableCell>Price Per Night</TableCell>
-            <TableCell>Facilities</TableCell>
-            <TableCell>Actions</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rooms.map((room) => (
-            <TableRow key={room.id}>
-              <TableCell>{room.roomNumber}</TableCell>
-              <TableCell>{room.capacity}</TableCell>
-              <TableCell>{room.roomType.roomTypeName}</TableCell>
-              <TableCell>{room.pricePerNight}</TableCell>
-              <TableCell>{room.facilities?.join(", ") || ""}</TableCell>
-              <TableCell>
-                <Button color="primary" onClick={() => handleEditClick(room)}>
-                  Edit
-                </Button>
-                <Button color="secondary" onClick={() => handleDelete(room.id)}>
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+      <Box sx={{ height: 400, width: "100%" }}>
+        <DataGrid
+          rows={rooms}
+          columns={columns}
+          initialState={{
+            pagination: {
+              paginationModel: {
+                pageSize: 5,
+              },
+            },
+          }}
+          pageSizeOptions={[5]}
+          checkboxSelection
+          disableRowSelectionOnClick
+        />
+      </Box>
       {renderDialog()}
     </div>
   );
