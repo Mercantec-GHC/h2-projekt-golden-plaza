@@ -24,6 +24,7 @@ import {
   capitalize,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { KeycloakContext } from "../App";
 
 const RoomManagement: React.FC = () => {
   axios.defaults.baseURL = "https://localhost:7207";
@@ -35,6 +36,8 @@ const RoomManagement: React.FC = () => {
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [currentRoom, setCurrentRoom] = useState<Partial<Room>>({});
   const [isEditing, setIsEditing] = useState<boolean>(false);
+
+  const { keycloak } = React.useContext(KeycloakContext);
 
   const columns: GridColDef[] = [
     { field: "roomNumber", headerName: "Room Number", width: 130 },
@@ -89,7 +92,7 @@ const RoomManagement: React.FC = () => {
   // Fetch Rooms
   const fetchRooms = async () => {
     try {
-      const response = await axios.get<Room[]>("/api/Room");
+      const response = await axios.get<Room[]>("/api/Rooms");
       setRooms(response.data);
     } catch (error) {
       console.error("Error fetching rooms:", error);
@@ -168,6 +171,15 @@ const RoomManagement: React.FC = () => {
 
   // Handle Form Submit
   const handleFormSubmit = async () => {
+    if (keycloak?.authenticated === false) {
+      console.error("Unauthorized access");
+      axios.defaults.headers.common["Authorization"] = null;
+      return;
+    } else {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${keycloak?.token}`;
+    }
     try {
       const roomData: Room = {
         id: currentRoom.id || 0, // Exclude 'id' when creating a new room
@@ -179,12 +191,9 @@ const RoomManagement: React.FC = () => {
       };
 
       if (isEditing && currentRoom.id) {
-        console.log("Updating room:", roomData);
-        console.log("Room ID:", roomData.id);
-        console.log("Endpoint used:", "/api/room/" + currentRoom.id);
-        await axios.put(`/api/room/${currentRoom.id}`, roomData);
+        await axios.put(`/api/rooms/${currentRoom.id}`, roomData);
       } else {
-        await axios.post("/api/room", roomData);
+        await axios.post("/api/rooms", roomData);
       }
       fetchRooms();
       handleDialogClose();
@@ -200,8 +209,17 @@ const RoomManagement: React.FC = () => {
 
   // Handle Delete Room
   const handleDelete = async (id: number) => {
+    if (keycloak?.authenticated === false) {
+      console.error("Unauthorized access");
+      axios.defaults.headers.common["Authorization"] = null;
+      return;
+    } else {
+      axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${keycloak?.token}`;
+    }
     try {
-      await axios.delete(`/api/room/${id}`);
+      await axios.delete(`/api/rooms/${id}`);
       fetchRooms();
     } catch (error: any) {
       if (error.response.status === 401) {

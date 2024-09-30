@@ -2,6 +2,7 @@
 
 import React from "react";
 import {
+  Button,
   Drawer,
   List,
   ListItemButton,
@@ -10,10 +11,12 @@ import {
   Toolbar,
   Divider,
   IconButton,
+  Box,
 } from "@mui/material";
-import { Home, Hotel, Book, Menu } from "@mui/icons-material";
+import { Home, Hotel, Book, Menu, Login } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useTheme, useMediaQuery } from "@mui/material";
+import { KeycloakContext } from "../App";
 
 const drawerWidth = 240;
 
@@ -23,9 +26,14 @@ const Sidebar: React.FC = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const { keycloak, init } = React.useContext(KeycloakContext);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleLoginClick = () => {
+    init();
   };
 
   const menuItems = [
@@ -36,21 +44,50 @@ const Sidebar: React.FC = () => {
   ];
 
   const drawerContent = (
-    <div>
-      <List>
-        {menuItems.map((item) => (
-          <ListItemButton
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-            key={item.text}
-            onClick={() => navigate(item.path)}
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+      <Toolbar />
+      <Divider />
+      <Box sx={{ flexGrow: 1 }}>
+        <List>
+          {menuItems.map((item) => (
+            <ListItemButton
+              component="nav"
+              aria-labelledby="nested-list-subheader"
+              key={item.text}
+              onClick={() => navigate(item.path)}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          ))}
+        </List>
+      </Box>
+      <Divider />
+      <Box sx={{ p: 2 }}>
+        {/* If not logged in shows a login button but if logged in will just show user name */}
+        {keycloak?.authenticated || false ? (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Login />}
+            fullWidth
+            onClick={() => keycloak?.logout()}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText primary={item.text} />
-          </ListItemButton>
-        ))}
-      </List>
-    </div>
+            {keycloak?.tokenParsed?.name || "Logged in"}
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<Login />}
+            fullWidth
+            onClick={handleLoginClick}
+          >
+            Login
+          </Button>
+        )}
+      </Box>
+    </Box>
   );
 
   return (
