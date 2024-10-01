@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -11,114 +11,127 @@ import Box from '@mui/material/Box';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
-import { useContext } from 'react';
-import { KeycloakContext } from '../../../App';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
 
-export default function MediaCard({ roomId, title, description, image, facilities }) {
+export default function MediaCard({ title, description, image, facilities }) {
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [roomType, setRoomType] = useState('');
     const [email, setEmail] = useState('');
     const [availabilityMessage, setAvailabilityMessage] = useState('');
     const [totalPrice, setTotalPrice] = useState(null);
-
-    const { keycloak } = useContext(KeycloakContext);
-    const [isLogin] = useState(keycloak.authenticated);
+    const [bookings, setBookings] = useState([]);
+    const [availableRoomId, setAvailableRoomId] = useState(null);
+    const [roomPrice, setRoomPrice] = useState(0);
 
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
-    //first check dates if they are available
+    const handleRoomTypeChange = (event) => {
+        setRoomType(event.target.value);
+        setRoomPrice(getRoomPrice(event.target.value)); // Set room price based on selected type
+    };
+
+    const getRoomPrice = (type) => {
+        switch (type) {
+            case '1':
+                return 100; // Standard price per night
+            case '2':
+                return 150; // Deluxe price per night
+            case '3':
+                return 200; // Premium price per night
+            default:
+                return 0;
+        }
+    };
+
+    // Fetch current bookings from the database
+    useEffect(() => {
+        const fetchBookings = async () => {
+            try {
+                const response = await fetch(`https://localhost:7207/api/Booking`);
+                const data = await response.json();
+                setBookings(data);
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+            }
+        };
+        fetchBookings();
+    }, []);
+
+    // Check availability based on room type and dates
     const checkAvailability = async () => {
-        if (!startDate || !endDate) {
-            setAvailabilityMessage('Please select both check-in and check-out dates.');
+        if (!startDate || !endDate || !roomType) {
+            setAvailabilityMessage('Please select room type, check-in, and check-out dates.');
             return;
         }
 
+        // Fetch available room IDs based on room type and dates
         try {
-            const response = await fetch(
-                `https://localhost:7207/api/Booking?roomId=${roomId}`
-            );
+            const response = await fetch(`https://localhost:7207/api/Rooms?roomTypeId=${roomType}`);
+            const rooms = await response.json();
 
-            const bookings = await response.json();
-
-            if (response.ok) {
-                // Check if the dates selected already has existing bookings
-                const overlappingBookings = bookings.filter(booking =>
+            // Check for overlapping bookings
+            const availableRooms = rooms.filter((room) => {
+                return !bookings.some((booking) =>
+                    booking.roomId === room.id &&
                     (new Date(booking.checkIn) < endDate && new Date(booking.checkOut) > startDate)
                 );
-                // mark rooms as available and calculate the time the room will be booked, then print out price
-                if (overlappingBookings.length === 0) {
-                    setAvailabilityMessage('Room is available.');
-                    const numberOfNights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
-                    setTotalPrice(numberOfNights * bookings[0].room.pricePerNight);
-                } else {
-                    setAvailabilityMessage('Room is not available for the selected dates.');
-                    setTotalPrice(null);
-                }
+            });
+
+            if (availableRooms.length > 0) {
+                setAvailableRoomId(availableRooms[0].id); // Choose the first available room
+                const numberOfNights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+                setTotalPrice(numberOfNights * roomPrice);
+                setAvailabilityMessage('Room is available. Room ID: ' + availableRooms[0].id);
             } else {
-                setAvailabilityMessage('Failed to check availability.');
+                setAvailabilityMessage('No rooms available for the selected dates.');
+                setTotalPrice(null);
             }
         } catch (error) {
             setAvailabilityMessage('An error occurred while checking availability.');
         }
     };
 
-    //creating the booking itself
+    // Booking the room
     const bookRoom = async () => {
-        if (!email) {
-            setAvailabilityMessage('Please enter an email address.');
+        if (availableRoomId === null || totalPrice === null) {
+            setAvailabilityMessage('Please check availability first.');
             return;
         }
-        //fetch the customer that the mail will get sent to
+
+        // Create booking
+        const booking = {
+            roomId: availableRoomId,
+            checkIn: startDate.toISOString(),
+            checkOut: endDate.toISOString(),
+            price: totalPrice,
+            email: email,
+            isReserved: true,
+        };
+
         try {
-            const customerResponse = await fetch(`https://localhost:7207/api/Customer`);
-            const customers = await customerResponse.json();
-            const customer = customers.find(c => c.email === email);
-
-            if (!customer) {
-                setAvailabilityMessage('Customer not found. Please check the email or sign up.');
-                return;
-            }
-
-            const customerId = customer.userId;
-
-            // Booking the room itself
             const response = await fetch(`https://localhost:7207/api/Booking`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    roomId,
-                    userId: customerId,
-                    checkIn: startDate.toISOString(),
-                    checkOut: endDate.toISOString(),
-                    price: totalPrice,
-                    isReserved: true
-                })
+                body: JSON.stringify(booking),
             });
 
-            const data = await response.json();
-
             if (response.ok) {
+                setBookings((prevBookings) => [...prevBookings, booking]); // Update local state
                 setAvailabilityMessage('Room booked successfully.');
-
-                // Send a confirmation email to the customer
-                await fetch('https://localhost:7207/Mail', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        emailToId: customer.email,
-                        emailToName: customer.email,
-                        emailSubject: `Booking Confirmation: Room ${roomId}`,
-                        emailBody: `Dear customer,\n\nThank you for booking with us! Here are your booking details:\n\nRoom ID: ${roomId}\nCheck-in Date: ${new Date(startDate).toLocaleDateString()}\nCheck-out Date: ${new Date(endDate).toLocaleDateString()}\nTotal Price: $${totalPrice}\n\nWe look forward to your stay!\n\nBest regards,\nThe Golden Plaza Hotel`
-                    })
-                });
+                setStartDate(null);
+                setEndDate(null);
+                setRoomType('');
+                setTotalPrice(null);
+                setAvailableRoomId(null);
             } else {
-                setAvailabilityMessage(data.message || 'Failed to book the room.');
+                const errorData = await response.json();
+                setAvailabilityMessage(errorData.message || 'Failed to book the room.');
             }
         } catch (error) {
             setAvailabilityMessage('An error occurred while booking the room.');
@@ -148,8 +161,20 @@ export default function MediaCard({ roomId, title, description, image, facilitie
                     {description}
                 </Typography>
                 <Typography variant="body2" sx={{ color: 'rgb(180, 155, 99)' }}>
-                    Facilities: {facilities.join(', ')}
+                    Facilities: {Array.isArray(facilities) ? facilities.join(', ') : 'N/A'}
                 </Typography>
+                {bookings.length > 0 && (
+                    <Box mt={2}>
+                        <Typography variant="h6" sx={{ color: 'rgb(180, 155, 99)' }}>
+                            Current Bookings:
+                        </Typography>
+                        {bookings.map((booking, index) => (
+                            <Typography key={index} variant="body2" sx={{ color: 'rgb(180, 155, 99)' }}>
+                                Room ID: {booking.roomId}, Check-in: {new Date(booking.checkIn).toLocaleDateString()}, Check-out: {new Date(booking.checkOut).toLocaleDateString()}, Price: ${booking.price}
+                            </Typography>
+                        ))}
+                    </Box>
+                )}
             </CardContent>
             <CardActions>
                 <Button
@@ -169,73 +194,78 @@ export default function MediaCard({ roomId, title, description, image, facilitie
             </CardActions>
 
             <Modal open={open} onClose={handleClose} aria-labelledby="modal-title" aria-describedby="modal-description">
-                {isLogin ? (
-                    <Box
-                        sx={{
-                            position: 'absolute',
-                            top: '50%',
-                            left: '50%',
-                            transform: 'translate(-50%, -50%)',
-                            width: 400,
-                            bgcolor: 'background.paper',
-                            border: '2px solid #000',
-                            boxShadow: 24,
-                            p: 4,
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            gap: 2,
-                        }}
+                <Box
+                    sx={{
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        transform: 'translate(-50%, -50%)',
+                        width: 400,
+                        bgcolor: 'background.paper',
+                        border: '2px solid #000',
+                        boxShadow: 24,
+                        p: 4,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 2,
+                    }}
+                >
+                    <Typography id="modal-title" variant="h6" component="h2">
+                        Select Room Type and Dates
+                    </Typography>
+                    <Select
+                        value={roomType}
+                        onChange={handleRoomTypeChange}
+                        displayEmpty
+                        fullWidth
                     >
-                        <Typography id="modal-title" variant="h6" component="h2">
-                            Select Check-in and Check-out Dates
+                        <MenuItem value="" disabled>
+                            Select Room Type
+                        </MenuItem>
+                        <MenuItem value="1">Standard</MenuItem>
+                        <MenuItem value="2">Deluxe</MenuItem>
+                        <MenuItem value="3">Premium</MenuItem>
+                    </Select>
+                    <DatePicker
+                        selected={startDate}
+                        onChange={(date) => setStartDate(date)}
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                        placeholderText="Check-in Date"
+                        inline
+                    />
+                    <DatePicker
+                        selected={endDate}
+                        onChange={(date) => setEndDate(date)}
+                        selectsEnd
+                        startDate={startDate}
+                        endDate={endDate}
+                        minDate={startDate}
+                        placeholderText="Check-out Date"
+                        inline
+                    />
+                    <TextField
+                        label="Email"
+                        variant="outlined"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        fullWidth
+                    />
+                    <Button onClick={checkAvailability} variant="contained" color="primary">
+                        Check Availability
+                    </Button>
+                    {availabilityMessage && (
+                        <Typography variant="body2" color="textSecondary" sx={{ marginTop: 2 }}>
+                            {availabilityMessage}
+                            {totalPrice !== null && ` Total Price: $${totalPrice}`}
                         </Typography>
-                        <DatePicker
-                            selected={startDate}
-                            onChange={(date) => setStartDate(date)}
-                            selectsStart
-                            startDate={startDate}
-                            endDate={endDate}
-                            placeholderText="Check-in Date"
-                            inline
-                        />
-                        <DatePicker
-                            selected={endDate}
-                            onChange={(date) => setEndDate(date)}
-                            selectsEnd
-                            startDate={startDate}
-                            endDate={endDate}
-                            minDate={startDate}
-                            placeholderText="Check-out Date"
-                            inline
-                        />
-                        <TextField
-                            label="Email"
-                            variant="outlined"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            fullWidth
-                        />
-                        <Button onClick={checkAvailability} variant="contained" color="primary">
-                            Check Availability
-                        </Button>
-                        {availabilityMessage && (
-                            <Typography variant="body2" color="textSecondary" sx={{ marginTop: 2 }}>
-                                {availabilityMessage}
-                                {totalPrice !== null && ` Total Price: $${totalPrice}`}
-                            </Typography>
-                        )}
-                        <Button onClick={bookRoom} variant="contained" color="secondary">
-                            Book Room
-                        </Button>
-                    </Box>
-                ) : (
-                    <Box>
-                        <Typography variant="h6" component="h2">
-                            Please login to book a room.
-                        </Typography>
-                    </Box>
-                )}
+                    )}
+                    <Button onClick={bookRoom} variant="contained" color="secondary" disabled={availableRoomId === null}>
+                        Book Room
+                    </Button>
+                </Box>
             </Modal>
         </Card>
     );
