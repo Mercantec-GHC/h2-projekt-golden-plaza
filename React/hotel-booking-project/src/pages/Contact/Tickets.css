@@ -1,0 +1,25 @@
+.background {
+    background-image: url('src/assets/lazlo-panaflex-HSClqx534aI-unsplash.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
+    min-width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+}
+
+
+.tickets {
+    padding: 10% 10% 10% 10%;
+}
+
+
+ul li {
+    list-style-type: none;
+}
