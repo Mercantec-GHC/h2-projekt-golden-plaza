@@ -1,6 +1,19 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
+import { createContext } from "react";
 import Home from "./pages/Home";
+import RoomManagement from "./pages/RoomManagement.tsx";
+import AuthProvider from "./components/AuthProvider.tsx";
+import Sidebar from "./components/Sidebar.tsx";
+
+export const KeycloakContext = createContext<{
+  keycloak: Keycloak.KeycloakInstance | null;
+  init: () => Promise<void>;
+}>({
+  keycloak: null,
+
+  init: () => Promise.resolve(),
+});
 
 // To add new pages simply add a new Route component to the Routes component
 // and then make sure to import the new page component at the top of this file
@@ -9,9 +22,13 @@ import Home from "./pages/Home";
 function App() {
   return (
     <>
-      <Routes>
-        <Route path="/" element={<Home />} />
-      </Routes>
+      <AuthProvider>
+        <Sidebar />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/roommanagement" element={<RoomManagement />} />
+        </Routes>
+      </AuthProvider>
     </>
   );
 }

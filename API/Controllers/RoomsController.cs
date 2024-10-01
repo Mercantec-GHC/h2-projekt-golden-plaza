@@ -1,13 +1,13 @@
 using API.Data;
-using API.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DomainModels.Models.Entities;
+using DomainModels.DTO;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
 
- [Route("api/[controller]")]
+[Route("api/[controller]")]
     [ApiController]
     public class RoomsController : ControllerBase
     {
@@ -22,7 +22,7 @@ namespace API.Controllers;
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
         {
-            return await _context.Rooms.ToListAsync();
+            return await _context.Rooms.Include(e => e.RoomType).ToListAsync();
         }
 
         // GET: api/Rooms/5
@@ -79,12 +79,19 @@ namespace API.Controllers;
         
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<Room>> PostRoom(RoomDTO roomDTO) 
+        public async Task<ActionResult<Room>> PostRoom(CreateRoomDTO roomDTO) 
         {
+            var roomType = await _context.RoomType.FirstOrDefaultAsync(rt => rt.Id == roomDTO.RoomTypeId);
+            
+            if (roomType == null)
+            {
+                return BadRequest("Room Type does not exist");
+            }
+
             var room = new Room
             {
                 Capacity = roomDTO.Capacity,
-                RoomType = roomDTO.RoomType,
+                RoomType = roomType,
                 RoomNumber = roomDTO.RoomNumber,
                 PricePerNight = roomDTO.PricePerNight,
                 Facilities = roomDTO.Facilities
