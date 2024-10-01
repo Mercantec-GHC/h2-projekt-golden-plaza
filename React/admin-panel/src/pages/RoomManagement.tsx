@@ -4,11 +4,7 @@ import React, { useState, useEffect } from "react";
 import { CreateRoomDTO, Room, RoomType } from "../interfaces/room";
 import axios, { AxiosResponse } from "axios";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
+  Autocomplete,
   Button,
   Dialog,
   DialogActions,
@@ -86,8 +82,16 @@ const RoomManagement: React.FC = () => {
   useEffect(() => {
     fetchRooms();
     fetchRoomTypes();
-    // fetchFacilities();
   }, []);
+
+  useEffect(() => {
+    // Extract unique facilities from existing rooms
+    const facilitiesSet = new Set<string>();
+    rooms.forEach((room) => {
+      room.facilities?.forEach((facility) => facilitiesSet.add(facility));
+    });
+    setFacilityOptions(Array.from(facilitiesSet));
+  }, [rooms]);
 
   // Fetch Rooms
   const fetchRooms = async () => {
@@ -300,27 +304,32 @@ const RoomManagement: React.FC = () => {
         />
         {/* Facilities */}
         <FormControl fullWidth margin="dense">
-          <InputLabel>Facilities</InputLabel>
-          <Select
+          <Autocomplete
             multiple
+            freeSolo
+            options={facilityOptions}
             value={currentRoom.facilities || []}
-            onChange={(e) =>
-              handleInputChange("facilities", e.target.value as string[])
+            onChange={(event, newValue) => {
+              handleInputChange("facilities", newValue);
+            }}
+            renderTags={(value: string[], getTagProps) =>
+              value.map((option: string, index: number) => (
+                <Chip
+                  variant="outlined"
+                  label={option}
+                  {...getTagProps({ index })}
+                />
+              ))
             }
-            renderValue={(selected) => (
-              <Box sx={{ display: "flex", flexWrap: "wrap" }}>
-                {(selected as string[]).map((value) => (
-                  <Chip key={value} label={value} sx={{ m: 0.5 }} />
-                ))}
-              </Box>
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                variant="standard"
+                label="Facilities"
+                placeholder="Add facility"
+              />
             )}
-          >
-            {facilityOptions.map((facility) => (
-              <MenuItem key={facility} value={facility}>
-                {facility}
-              </MenuItem>
-            ))}
-          </Select>
+          />
         </FormControl>
       </DialogContent>
       <DialogActions>
