@@ -1,6 +1,6 @@
 {
   "id": "072063d0-5eb0-4c4b-8df2-e36c9ca6d058",
-  "realm": "Test",
+  "realm": "golden-plaza",
   "notBefore": 0,
   "defaultSignatureAlgorithm": "RS256",
   "revokeRefreshToken": false,

@@ -6,7 +6,7 @@ dbserver.WithDataVolume().WithPgAdmin();
 
 
 // if keycloak fails, add the port number to it like this
-var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume().WithImport("./KeycloakCofiguration/test-kc-conf.json");
+var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume();
 // default login is admin admin ( username: admin, paswword: admin ) can be changed
 //var keycloak = builder.AddKeycloakContainer("keycloak").WithDataVolume();
 
