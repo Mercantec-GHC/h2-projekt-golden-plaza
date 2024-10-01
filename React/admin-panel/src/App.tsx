@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 import { createContext } from "react";
 import Home from "./pages/Home";
 import RoomManagement from "./pages/RoomManagement.tsx";
+import RoomTypeManagement from "./pages/RoomTypeManagement.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 
@@ -27,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/roommanagement" element={<RoomManagement />} />
+          <Route path="/roomtypes" element={<RoomTypeManagement />} />
         </Routes>
       </AuthProvider>
     </>
