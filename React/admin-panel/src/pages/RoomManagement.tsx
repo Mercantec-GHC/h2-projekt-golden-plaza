@@ -1,7 +1,7 @@
 // src/components/RoomManagement.tsx
 
 import React, { useState, useEffect } from "react";
-import { Room, RoomType } from "../interfaces/room";
+import { CreateRoomDTO, Room, RoomType } from "../interfaces/room";
 import axios, { AxiosResponse } from "axios";
 import {
   Table,
@@ -181,7 +181,7 @@ const RoomManagement: React.FC = () => {
       ] = `Bearer ${keycloak?.token}`;
     }
     try {
-      const roomData: Room = {
+      const roomData: Room | CreateRoomDTO = {
         id: currentRoom.id || 0, // Exclude 'id' when creating a new room
         capacity: currentRoom.capacity || 0,
         roomType: currentRoom.roomType as RoomType,
@@ -193,7 +193,15 @@ const RoomManagement: React.FC = () => {
       if (isEditing && currentRoom.id) {
         await axios.put(`/api/rooms/${currentRoom.id}`, roomData);
       } else {
-        await axios.post("/api/rooms", roomData);
+        // Change roomData to CreateRoomDTO
+        const createRoomData = {
+          capacity: currentRoom.capacity || 0,
+          roomTypeId: (currentRoom.roomType as RoomType).id || 0,
+          roomNumber: currentRoom.roomNumber || 0,
+          pricePerNight: currentRoom.pricePerNight || 0,
+          facilities: currentRoom.facilities || [],
+        };
+        await axios.post("/api/rooms", createRoomData);
       }
       fetchRooms();
       handleDialogClose();

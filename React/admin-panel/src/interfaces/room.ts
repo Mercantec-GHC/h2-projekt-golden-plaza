@@ -11,3 +11,11 @@ export interface RoomType {
     pricePerNight: number;
     facilities: string[] | [] | null;
   }
+
+  export interface CreateRoomDTO {
+    capacity: number;
+    roomTypeId: number;
+    roomNumber: number;
+    pricePerNight: number;
+    facilities: string[] | [] | null;
+  }
