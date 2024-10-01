@@ -180,6 +180,45 @@ public class BookingController : ControllerBase
 
         return NoContent();
     }
+    [HttpPut("{id}")]
+    [Authorize] // Ensure the user has the right to modify bookings
+    public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingDTO bookingDTO)
+    {
+        // Check for ID mismatch
+        if (id != bookingDTO.Id)
+        {
+            return BadRequest("ID mismatch.");
+        }
 
-  
+        // Find the booking in the database
+        var booking = await _context.Bookings.FindAsync(id);
+        if (booking == null)
+        {
+            return NotFound("Booking not found.");
+        }
+
+        // Update the booking date
+        booking.Date = bookingDTO.Date;
+
+        try
+        {
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!BookingExists(id))
+            {
+                return NotFound("Booking not found during update.");
+            }
+            throw; // Rethrow the exception if not a concurrency issue
+        }
+        catch (DbUpdateException ex)
+        {
+            return StatusCode(500, $"Database update error: {ex.Message}");
+        }
+
+        return NoContent(); // Return 204 No Content on success
+    }
+
+
 }
