@@ -13,7 +13,15 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
-import { Home, Hotel, Book, Menu, Login } from "@mui/icons-material";
+import {
+  Home,
+  Hotel,
+  Book,
+  Menu,
+  Login,
+  Category,
+  UploadFile,
+} from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { KeycloakContext } from "../App";
@@ -39,7 +47,9 @@ const Sidebar: React.FC = () => {
   const menuItems = [
     { text: "Home", icon: <Home />, path: "/" },
     { text: "Rooms", icon: <Hotel />, path: "/roommanagement" },
+    { text: "Room Types", icon: <Category />, path: "/roomtypes" },
     { text: "Bookings", icon: <Book />, path: "/bookings" },
+    { text: "Batch Import", icon: <UploadFile />, path: "/batch-import" },
     // Add more menu items as needed
   ];
 
