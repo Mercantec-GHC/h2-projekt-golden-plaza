@@ -119,6 +119,7 @@ using (var scope = app.Services.CreateScope())
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<ApplicationDBContext>();
+    context.Database.EnsureCreated(); // Ensure the database is created
     try
     {
         context.Database.Migrate(); // Apply pending migrations
