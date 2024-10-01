@@ -52,7 +52,6 @@ const Tickets = () => {
                 }
             }
             const response = await axios.get(`/Ticket/${id}`, config);
-            console.log(response.data);
             setTickets(response.data);
         } catch (error) {
             setError('Failed to fetch tickets');
@@ -72,7 +71,6 @@ const Tickets = () => {
             const response = await axios.post('/Ticket',newTicket, config);
             setTickets([...tickets, response.data]);
             setNewTicket({ title: '', description: '', status: 0, userSid: keycloak.subject });
-            console.log(keycloak.subject)
         } catch (error) {
             setError('Failed to add ticket');
         }
