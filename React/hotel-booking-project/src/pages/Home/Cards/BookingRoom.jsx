@@ -13,6 +13,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import { useLocation } from 'react-router-dom'; // Import useLocation for query params
 
 export default function MediaCard({ title, description, image, facilities }) {
     const [open, setOpen] = useState(false);
@@ -25,7 +26,11 @@ export default function MediaCard({ title, description, image, facilities }) {
     const [bookings, setBookings] = useState([]);
     const [availableRoomId, setAvailableRoomId] = useState(null);
     const [roomPrice, setRoomPrice] = useState(0);
+    const [isLocked, setIsLocked] = useState(false); // Locking the dropdown
 
+    const location = useLocation(); // Hook to access URL query params
+
+    // Modal controls
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
@@ -60,6 +65,18 @@ export default function MediaCard({ title, description, image, facilities }) {
         };
         fetchBookings();
     }, []);
+
+    // Check if room type is selected from the query parameter and set it
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        const roomTypeId = queryParams.get('roomTypeId');
+
+        if (roomTypeId) {
+            setRoomType(roomTypeId);
+            setRoomPrice(getRoomPrice(roomTypeId)); // Set price based on room type
+            setIsLocked(true); // Lock the dropdown when a room type is selected
+        }
+    }, [location.search]);
 
     // Check availability based on room type and dates
     const checkAvailability = async () => {
@@ -129,6 +146,7 @@ export default function MediaCard({ title, description, image, facilities }) {
                 setRoomType('');
                 setTotalPrice(null);
                 setAvailableRoomId(null);
+                setIsLocked(false); // Unlock dropdown for future bookings
             } else {
                 const errorData = await response.json();
                 setAvailabilityMessage(errorData.message || 'Failed to book the room.');
@@ -219,6 +237,7 @@ export default function MediaCard({ title, description, image, facilities }) {
                         onChange={handleRoomTypeChange}
                         displayEmpty
                         fullWidth
+                        disabled={isLocked} // Disable if locked
                     >
                         <MenuItem value="" disabled>
                             Select Room Type
