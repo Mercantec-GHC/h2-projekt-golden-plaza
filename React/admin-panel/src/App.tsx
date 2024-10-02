@@ -3,6 +3,8 @@ import { Routes, Route } from "react-router-dom";
 import { createContext } from "react";
 import Home from "./pages/Home";
 import RoomManagement from "./pages/RoomManagement.tsx";
+import RoomTypeManagement from "./pages/RoomTypeManagement.tsx";
+import BatchImport from "./pages/BachImport.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Tickets from "./pages/Tickets.tsx";
@@ -29,6 +31,8 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/roommanagement" element={<RoomManagement />} />
           <Route path="/tickets" element={<Tickets />} />
+          <Route path="/roomtypes" element={<RoomTypeManagement />} />
+          <Route path="/batch-import" element={<BatchImport />} />
         </Routes>
       </AuthProvider>
     </>

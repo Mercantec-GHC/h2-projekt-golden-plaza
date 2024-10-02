@@ -31,11 +31,14 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CustomerUserId")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("Date")
+                    b.Property<DateTime>("CheckIn")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CheckOut")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("CustomerUserId")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsReserved")
                         .HasColumnType("boolean");
@@ -223,19 +226,15 @@ namespace API.Migrations
 
             modelBuilder.Entity("DomainModels.Models.Entities.Booking", b =>
                 {
-                    b.HasOne("DomainModels.Models.Entities.Customer", "Customer")
+                    b.HasOne("DomainModels.Models.Entities.Customer", null)
                         .WithMany("Bookings")
-                        .HasForeignKey("CustomerUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CustomerUserId");
 
                     b.HasOne("DomainModels.Models.Entities.Room", "Room")
                         .WithMany("Availabilities")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Customer");
 
                     b.Navigation("Room");
                 });
