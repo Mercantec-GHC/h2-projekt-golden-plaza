@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import RoomManagement from "./pages/RoomManagement.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
+import Tickets from "./pages/Tickets.tsx";
 
 export const KeycloakContext = createContext<{
   keycloak: Keycloak.KeycloakInstance | null;
@@ -27,6 +28,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/roommanagement" element={<RoomManagement />} />
+          <Route path="/tickets" element={<Tickets />} />
         </Routes>
       </AuthProvider>
     </>
