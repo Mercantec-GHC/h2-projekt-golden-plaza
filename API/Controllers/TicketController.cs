@@ -31,10 +31,10 @@ namespace API.Controllers
             return Ok(ticket);
         }
         //fetch the id of a ticket
-        [HttpGet("{id}")]
-        public IActionResult GetById([FromRoute] int id)
+        [HttpGet("{userSid}")]
+        public IActionResult GetById([FromRoute] string userSid)
         {
-            var ticket = _context.Tickets.Find(id);
+            var ticket = _context.Tickets.Where(t => t.userSid == userSid);
             //Just in case null, returns not found
             if (ticket == null)
             {

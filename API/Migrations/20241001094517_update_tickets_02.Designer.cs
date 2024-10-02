@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace API.Migrations
 {
     [DbContext(typeof(ApplicationDBContext))]
-    partial class ApplicationDBContextModelSnapshot : ModelSnapshot
+    [Migration("20241001094517_update_tickets_02")]
+    partial class update_tickets_02
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,14 +34,11 @@ namespace API.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CheckIn")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CheckOut")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int?>("CustomerUserId")
+                    b.Property<int>("CustomerUserId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsReserved")
                         .HasColumnType("boolean");
@@ -144,6 +144,10 @@ namespace API.Migrations
                     b.Property<int>("status")
                         .HasColumnType("integer");
 
+                    b.Property<string>("userSid")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Tickets");
@@ -161,9 +165,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasMaxLength(8)
                         .HasColumnType("character varying(8)");
-
-                    b.Property<DateTime>("RegisterDate")
-                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("UserId");
 
@@ -226,9 +227,11 @@ namespace API.Migrations
 
             modelBuilder.Entity("DomainModels.Models.Entities.Booking", b =>
                 {
-                    b.HasOne("DomainModels.Models.Entities.Customer", null)
+                    b.HasOne("DomainModels.Models.Entities.Customer", "Customer")
                         .WithMany("Bookings")
-                        .HasForeignKey("CustomerUserId");
+                        .HasForeignKey("CustomerUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("DomainModels.Models.Entities.Room", "Room")
                         .WithMany("Availabilities")
@@ -236,13 +239,15 @@ namespace API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Customer");
+
                     b.Navigation("Room");
                 });
 
             modelBuilder.Entity("DomainModels.Models.Entities.Room", b =>
                 {
                     b.HasOne("DomainModels.Models.Entities.RoomType", "RoomType")
-                        .WithMany("Rooms")
+                        .WithMany()
                         .HasForeignKey("RoomTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -264,11 +269,6 @@ namespace API.Migrations
             modelBuilder.Entity("DomainModels.Models.Entities.Room", b =>
                 {
                     b.Navigation("Availabilities");
-                });
-
-            modelBuilder.Entity("DomainModels.Models.Entities.RoomType", b =>
-                {
-                    b.Navigation("Rooms");
                 });
 
             modelBuilder.Entity("DomainModels.Models.Entities.Customer", b =>

@@ -40,3 +40,23 @@
 .read-the-docs {
   color: #888;
 }
+
+.background {
+  background-image: url('src/assets/lazlo-panaflex-HSClqx534aI-unsplash.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 200%;
+  width: 450%;
+  min-width: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  margin-left: -150%;
+}
+
+
+.tickets {
+  padding: 10% 10% 10% 10%;
+}

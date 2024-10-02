@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace DomainModels.Models.Entities
 {
     public class RoomType
@@ -5,7 +7,8 @@ namespace DomainModels.Models.Entities
         public int Id { get; set; }
         public string RoomTypeName { get; set; } = "Standard";
 
-        //public List<Room> Rooms { get; set; }
+        [JsonIgnore]
+        public List<Room> Rooms { get; set; }
 
     }
 }

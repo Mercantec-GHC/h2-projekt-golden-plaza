@@ -43,7 +43,6 @@ namespace API.Controllers
                 Email = request.Email,
                 PasswordHash = Convert.ToBase64String(passwordHash),
                 PasswordSalt = Convert.ToBase64String(passwordSalt),
-                RegisterDate = DateTime.UtcNow  // Store the current time as the registration date.
             };
 
             // Add the new customer to the database and save changes.

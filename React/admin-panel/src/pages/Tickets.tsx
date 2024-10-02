@@ -1,16 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react';
 import axios from 'axios';
-import { KeycloakContext } from '../../App';
+import { KeycloakContext } from '../App';
 import { Button, MenuItem, TextField, Select, Container, Grid2 } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material';
 
 // Enum for ticket status
-const StatusEnum = {
-    0: 'Open',
-    1: 'Work In Progress',
-    2: 'Closed Completed',
-    3: 'Closed Skipped',
-};
+enum StatusEnum {
+    Open = 0,
+    WorkInProgress = 1,
+    ClosedCompleted = 2,
+    ClosedSkipped = 3,
+}
 const theme = createTheme({
     palette: {
       primary:{
@@ -27,31 +27,37 @@ const theme = createTheme({
   };
 
 const Tickets = () => {
-    const {keycloak} = useContext(KeycloakContext);
-    const [tickets, setTickets] = useState([]);
-    const [newTicket, setNewTicket] = useState({ title: '', description: '', status: 0, userSid: keycloak.subject });
-    const [editTicket, setEditTicket] = useState(null);
+    interface Ticket {
+        id: number;
+        title: string;
+        description: string;
+        status: number;
+    }
+    
+    const [tickets, setTickets] = useState<Ticket[]>([]);
+    const [newTicket, setNewTicket] = useState({ title: '', description: '', status: 0 });
+    const [editTicket, setEditTicket] = useState<Ticket | null>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true); // Track loading state
-    
+    const {keycloak} = useContext(KeycloakContext);
 
     // Set Axios base URL (optional if API base is the same across the app)
     axios.defaults.baseURL = 'https://localhost:7207/api'; // Adjust to your backend's actual URL
 
     // Fetch all tickets when the component mounts
     useEffect(() => {
-        fetchTickets(keycloak.subject);
+        fetchTickets();
     }, []);
 
-    const fetchTickets = async (id) => {
+    const fetchTickets = async () => {
         try {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
-            const response = await axios.get(`/Ticket/${id}`, config);
+            const response = await axios.get('/Ticket', config);
             setTickets(response.data);
         } catch (error) {
             setError('Failed to fetch tickets');
@@ -65,23 +71,23 @@ const Tickets = () => {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
             const response = await axios.post('/Ticket',newTicket, config);
             setTickets([...tickets, response.data]);
-            setNewTicket({ title: '', description: '', status: 0, userSid: keycloak.subject });
+            setNewTicket({ title: '', description: '', status: 0 });
         } catch (error) {
             setError('Failed to add ticket');
         }
     };
 
-    const updateTicket = async (ticket) => {
+    const updateTicket = async (ticket: Ticket) => {
         try {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
             const response = await axios.put('/Ticket', ticket, config);
@@ -92,8 +98,22 @@ const Tickets = () => {
         }
     };
 
+    const deleteTicket = async (id: number) => {
+        try {
+            let config = {
+                headers: {
+                    accept: "application/json",
+                    authorization: `Bearer ${keycloak?.token || ''}`
+                }
+            }
+            await axios.delete(`/Ticket/${id}`, config);
+            setTickets(tickets.filter((t) => t.id !== id));
+        } catch (error) {
+            setError('Failed to delete ticket');
+        }
+    };
 
-    const handleEdit = (ticket) => {
+    const handleEdit = (ticket: Ticket) => {
         setEditTicket(ticket);
     };
 
@@ -103,7 +123,7 @@ const Tickets = () => {
 
     return (
         <div className='background'>
-        <Grid2 sx={{bgcolor: 'rgba(255,255,255,0.7)', backdropFilter:'blur(8px)', padding: '2% 2% 2% 2%', borderRadius: '3%', maxHeight: '100%', marginTop: '2%'}} size={8} wrap='wrap' container={true} className='tickets'>
+        <Grid2 sx={{bgcolor: 'rgba(255,255,255,0.7)', backdropFilter:'blur(8px)', padding: '2% 2% 2% 2%', borderRadius: '3%', maxHeight: '100%', marginTop: '2%', maxWidth: '100%', width: '70%'}} wrap='wrap' container={true} className='tickets'>
         <ThemeProvider theme={theme}>
         <Grid2 offset={{md: 1}}>
             <h2>Add New Ticket</h2>
@@ -175,6 +195,7 @@ const Tickets = () => {
                                             <p>{ticket.description}</p>
                                             <p>Status: {StatusEnum[ticket.status]}</p>
                                             <Button variant='contained' sx={{color: '#ffffff'}} color='primary' onClick={() => handleEdit(ticket)}>Edit</Button>
+                                            <Button variant='contained' sx={{color: '#ffffff'}} color='primary' onClick={() => deleteTicket(ticket.id)}>Delete</Button>
                                         </div>
                                     )}
                                 </li>
