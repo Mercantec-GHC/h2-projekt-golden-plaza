@@ -2,6 +2,7 @@ using API.Data;
 using DomainModels.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace API.Controllers
 {
@@ -41,6 +42,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
+            if (IsBookingOverlapping(booking))
+            {
+                return BadRequest("Booking is overlapping with another booking");
+            }
+
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
@@ -54,6 +61,11 @@ namespace API.Controllers
             if (id != booking.Id)
             {
                 return BadRequest();
+            }
+
+            if (IsBookingOverlapping(booking))
+            {
+                return BadRequest("Booking is overlapping with another booking");
             }
 
             _context.Entry(booking).State = EntityState.Modified;
@@ -96,6 +108,14 @@ namespace API.Controllers
         private bool BookingExists(int id)
         {
             return _context.Bookings.Any(e => e.Id == id);
+        }
+
+        private bool IsBookingOverlapping(Booking newBooking)
+        {
+            return _context.Bookings
+                .Any(b => b.RoomId == newBooking.RoomId &&
+                  b.Id != newBooking.Id && // Exclude the current booking when updating
+                  ((newBooking.CheckIn < b.CheckOut) && (newBooking.CheckOut > b.CheckIn)));
         }
     }
 }
