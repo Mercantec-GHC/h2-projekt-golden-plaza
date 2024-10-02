@@ -7,6 +7,7 @@ import RoomTypeManagement from "./pages/RoomTypeManagement.tsx";
 import BatchImport from "./pages/BachImport.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
+import Tickets from "./pages/Tickets.tsx";
 
 export const KeycloakContext = createContext<{
   keycloak: Keycloak.KeycloakInstance | null;
@@ -29,6 +30,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/roommanagement" element={<RoomManagement />} />
+          <Route path="/tickets" element={<Tickets />} />
           <Route path="/roomtypes" element={<RoomTypeManagement />} />
           <Route path="/batch-import" element={<BatchImport />} />
         </Routes>

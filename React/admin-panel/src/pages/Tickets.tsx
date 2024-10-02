@@ -5,12 +5,12 @@ import { Button, MenuItem, TextField, Select, Container, Grid2 } from '@mui/mate
 import { createTheme, ThemeProvider } from '@mui/material';
 
 // Enum for ticket status
-const StatusEnum = {
-    0: 'Open',
-    1: 'Work In Progress',
-    2: 'Closed Completed',
-    3: 'Closed Skipped',
-};
+enum StatusEnum {
+    Open = 0,
+    WorkInProgress = 1,
+    ClosedCompleted = 2,
+    ClosedSkipped = 3,
+}
 const theme = createTheme({
     palette: {
       primary:{
@@ -27,9 +27,16 @@ const theme = createTheme({
   };
 
 const Tickets = () => {
-    const [tickets, setTickets] = useState([]);
+    interface Ticket {
+        id: number;
+        title: string;
+        description: string;
+        status: number;
+    }
+    
+    const [tickets, setTickets] = useState<Ticket[]>([]);
     const [newTicket, setNewTicket] = useState({ title: '', description: '', status: 0 });
-    const [editTicket, setEditTicket] = useState(null);
+    const [editTicket, setEditTicket] = useState<Ticket | null>(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(true); // Track loading state
     const {keycloak} = useContext(KeycloakContext);
@@ -47,7 +54,7 @@ const Tickets = () => {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
             const response = await axios.get('/Ticket', config);
@@ -64,7 +71,7 @@ const Tickets = () => {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
             const response = await axios.post('/Ticket',newTicket, config);
@@ -75,12 +82,12 @@ const Tickets = () => {
         }
     };
 
-    const updateTicket = async (ticket) => {
+    const updateTicket = async (ticket: Ticket) => {
         try {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
             const response = await axios.put('/Ticket', ticket, config);
@@ -91,12 +98,12 @@ const Tickets = () => {
         }
     };
 
-    const deleteTicket = async (id) => {
+    const deleteTicket = async (id: number) => {
         try {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}`
+                    authorization: `Bearer ${keycloak?.token || ''}`
                 }
             }
             await axios.delete(`/Ticket/${id}`, config);
@@ -106,7 +113,7 @@ const Tickets = () => {
         }
     };
 
-    const handleEdit = (ticket) => {
+    const handleEdit = (ticket: Ticket) => {
         setEditTicket(ticket);
     };
 
@@ -116,7 +123,7 @@ const Tickets = () => {
 
     return (
         <div className='background'>
-        <Grid2 sx={{bgcolor: 'rgba(255,255,255,0.7)', backdropFilter:'blur(8px)', padding: '2% 2% 2% 2%', borderRadius: '3%', maxHeight: '100%', marginTop: '2%'}} size={8} wrap='wrap' container={true} className='tickets'>
+        <Grid2 sx={{bgcolor: 'rgba(255,255,255,0.7)', backdropFilter:'blur(8px)', padding: '2% 2% 2% 2%', borderRadius: '3%', maxHeight: '100%', marginTop: '2%', maxWidth: '100%', width: '70%'}} wrap='wrap' container={true} className='tickets'>
         <ThemeProvider theme={theme}>
         <Grid2 offset={{md: 1}}>
             <h2>Add New Ticket</h2>
