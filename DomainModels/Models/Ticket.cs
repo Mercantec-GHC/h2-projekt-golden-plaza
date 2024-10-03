@@ -1,5 +1,6 @@
 ﻿namespace DomainModels.Models.Entities
 {
+    //Class to handle Tickets
     public class Ticket
     {
         public int Id { get; set; }

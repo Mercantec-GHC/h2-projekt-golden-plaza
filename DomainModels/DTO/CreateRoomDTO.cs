@@ -1,5 +1,6 @@
 ﻿namespace DomainModels.DTO
 {
+    //Made specifically to handle creating rooms.
     public class CreateRoomDTO
     {
         public int Id { get; set; }

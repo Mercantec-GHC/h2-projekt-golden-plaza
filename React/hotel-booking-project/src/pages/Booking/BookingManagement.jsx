@@ -6,26 +6,30 @@ const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
     const [editBooking, setEditBooking] = useState(null);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true); // Track loading state
+    const [loading, setLoading] = useState(true);
     const { keycloak } = useContext(KeycloakContext);
 
-    axios.defaults.baseURL = 'https://localhost:7207/api'; // Adjust to match your backend API URL
+    axios.defaults.baseURL = 'https://localhost:7207/api';
 
-    // Fetch bookings when the component mounts
+    // Fetch bookings
     useEffect(() => {
         fetchBookings();
     }, []);
 
+    //Method to get the bookings, that have been made.
     const fetchBookings = async () => {
+        //Confirms if the user is Authorized
         try {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}` // Add the Keycloak token for authorization
+                    authorization: `Bearer ${keycloak.token}`
                 }
             };
+            //Gets the data about the bookings
             const response = await axios.get('/Booking', config);
             setBookings(response.data);
+        //Error handling
         } catch (error) {
             setError('Failed to fetch bookings');
         } finally {
@@ -33,14 +37,16 @@ const BookingManagement = () => {
         }
     };
 
-    // Update the booking with the edited date
+    // Allows the user to update the date of the booking
     const updateBooking = async (booking) => {
+        //Gets the new requested date and time
         try {
             const updatedBooking = {
                 id: booking.id,
-                date: new Date(booking.date).toISOString() // Convert to UTC ISO string
+                date: new Date(booking.date).toISOString()
             };
 
+            //Authentication
             let config = {
                 headers: {
                     accept: "application/json",
@@ -51,9 +57,10 @@ const BookingManagement = () => {
             // Make the PUT request to update the booking
             const response = await axios.put(`/Booking/${booking.id}`, updatedBooking, config);
 
-            // Update the local bookings state with the updated booking
+            // Updates the booking through ID
             setBookings(bookings.map(b => (b.id === booking.id ? response.data : b)));
-            setEditBooking(null); // Clear the edit state
+            setEditBooking(null);
+        //Error handling
         } catch (error) {
             setError('Failed to update booking');
             console.error('Update Booking Error:', error.response?.data || error.message);
@@ -62,28 +69,34 @@ const BookingManagement = () => {
 
     // Cancel (delete) a booking
     const cancelBooking = async (id) => {
+        //Pop up message to confirm that the booking should be deleted/canceled
         if (window.confirm('Are you sure you want to cancel this booking?')) {
+            //Authentication
             try {
                 let config = {
                     headers: {
                         accept: "application/json",
-                        authorization: `Bearer ${keycloak.token}` // Add the Keycloak token for authorization
+                        authorization: `Bearer ${keycloak.token}`
                     }
                 };
-                await axios.delete(`/Booking/${id}`, config); // Delete the booking
-                setBookings(bookings.filter(b => b.id !== id)); // Remove booking from the state
+                //Deletes the booking
+                await axios.delete(`/Booking/${id}`, config);
+                setBookings(bookings.filter(b => b.id !== id)); 
+            //Error handling
             } catch (error) {
                 setError('Failed to cancel booking');
             }
         }
     };
 
+    // When button is pressed then allows the user to edit the booking
     const handleEdit = (booking) => {
-        setEditBooking(booking); // Set the booking that the user wants to edit
+        setEditBooking(booking); 
     };
 
+    // When button is pressed it cancels the booking
     const handleCancelEdit = () => {
-        setEditBooking(null); // Reset the edit state to cancel the edit form
+        setEditBooking(null);
     };
 
     return (
@@ -105,10 +118,12 @@ const BookingManagement = () => {
                                             {/* Only the Date can be edited */}
                                             <input
                                                 type="datetime-local"
-                                                value={new Date(editBooking.date).toISOString().slice(0, 16)} // Convert to ISO string and format
+                                                value={new Date(editBooking.date).toISOString().slice(0, 16)}
                                                 onChange={(e) => setEditBooking({ ...editBooking, date: e.target.value })}
                                             />
+                                            {/* Saves the changes made in the database */ }
                                             <button onClick={() => updateBooking(editBooking)}>Save</button>
+                                            {/* Button to cancel booking */ }
                                             <button onClick={handleCancelEdit}>Cancel</button>
                                         </div>
                                     ) : (

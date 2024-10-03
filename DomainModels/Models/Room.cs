@@ -1,5 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
+//Class to handle rooms
 namespace DomainModels.Models.Entities
 {
     public class Room
@@ -12,6 +13,7 @@ namespace DomainModels.Models.Entities
         public List<string>? Facilities { get; set; }
         // Navigation property to Booking
 
+        //JsonIgnore to avoid errors in post requests for rooms and booking.
         [JsonIgnore]
         public List<Booking>? Availabilities { get; set; } 
     }
