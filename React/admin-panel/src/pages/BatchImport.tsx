@@ -19,20 +19,23 @@ import axios from "axios";
 import { KeycloakContext } from "../App";
 
 const BatchImport: React.FC = () => {
+  // Set the base URL for axios requests
   axios.defaults.baseURL = "https://localhost:7207";
 
-  const [entityType, setEntityType] = useState<string>("");
-  const [jsonInput, setJsonInput] = useState<string>("");
-  const [fileInput, setFileInput] = useState<File | null>(null);
+  // State variables for form inputs and feedback
+  const [entityType, setEntityType] = useState<string>(""); // Selected entity type
+  const [jsonInput, setJsonInput] = useState<string>(""); // JSON data input
+  const [fileInput, setFileInput] = useState<File | null>(null); // File input for JSON file
   const [feedback, setFeedback] = useState<{
     type: "success" | "error";
     message: string;
-  } | null>(null);
-  const [loading, setLoading] = useState<boolean>(false);
+  } | null>(null); // Feedback message to display
+  const [loading, setLoading] = useState<boolean>(false); // Loading state during import
   const [importErrors, setImportErrors] = useState<
     { index: number; error: string }[]
-  >([]);
+  >([]); // Errors encountered during import
 
+  // Example JSON data for each entity type to assist the user
   const exampleJsonData: { [key: string]: string } = {
     Rooms: JSON.stringify(
       [
@@ -74,29 +77,33 @@ const BatchImport: React.FC = () => {
     ),
   };
 
-  const { keycloak } = React.useContext(KeycloakContext);
+  // Access Keycloak authentication context
+  const { keycloak } = useContext(KeycloakContext);
 
+  // List of entity types available for import
   const entityTypes = ["Rooms", "Bookings", "Room Types", "Tickets"];
 
+  // Handle changes to the selected entity type
   const handleEntityTypeChange = (value: string) => {
-    setEntityType(value);
-    setJsonInput(exampleJsonData[value] || "");
+    setEntityType(value); // Update the selected entity type
+    setJsonInput(exampleJsonData[value] || ""); // Provide example JSON data for the selected type
   };
 
+  // Handle file input changes when a user selects a file
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+    const file = event.target.files?.[0]; // Get the first selected file
     if (file) {
-      setFileInput(file);
+      setFileInput(file); // Update the file input state
       const reader = new FileReader();
       reader.onload = (e) => {
         const content = e.target?.result;
         if (typeof content === "string") {
-          setJsonInput(content);
+          setJsonInput(content); // Set the JSON input to the file content
         }
       };
-      reader.readAsText(file);
+      reader.readAsText(file); // Read the file as text
 
-      // Give feedback for when the file is uploaded
+      // Provide feedback that the file was uploaded successfully
       setFeedback({
         type: "success",
         message: `File ${file.name} uploaded successfully.`,
@@ -104,6 +111,7 @@ const BatchImport: React.FC = () => {
     }
   };
 
+  // Parse the JSON input provided by the user
   const parseJsonInput = () => {
     try {
       const data = JSON.parse(jsonInput);
@@ -116,6 +124,7 @@ const BatchImport: React.FC = () => {
     }
   };
 
+  // Validate the data according to the selected entity type
   const validateData = (data: any[]) => {
     switch (entityType) {
       case "Rooms":
@@ -131,6 +140,7 @@ const BatchImport: React.FC = () => {
     }
   };
 
+  // Validation function for Room entities
   const validateRoom = (item: any) => {
     return (
       typeof item.capacity === "number" &&
@@ -141,6 +151,7 @@ const BatchImport: React.FC = () => {
     );
   };
 
+  // Validation function for Booking entities
   const validateBooking = (item: any) => {
     return (
       typeof item.roomId === "number" &&
@@ -151,10 +162,12 @@ const BatchImport: React.FC = () => {
     );
   };
 
+  // Validation function for Room Type entities
   const validateRoomType = (item: any) => {
     return typeof item === "string";
   };
 
+  // Validation function for Ticket entities
   const validateTicket = (item: any) => {
     return (
       (item.title === undefined || typeof item.title === "string") &&
@@ -164,6 +177,7 @@ const BatchImport: React.FC = () => {
     );
   };
 
+  // Get the appropriate API endpoint based on the entity type
   const getApiEndpoint = (entityType: string) => {
     switch (entityType) {
       case "Rooms":
@@ -179,8 +193,10 @@ const BatchImport: React.FC = () => {
     }
   };
 
+  // Handle the import process when the user clicks the "Import" button
   const handleImport = async () => {
     try {
+      // Check if an entity type has been selected
       if (!entityType) {
         setFeedback({
           type: "error",
@@ -189,36 +205,40 @@ const BatchImport: React.FC = () => {
         return;
       }
 
+      // Check if JSON input is provided
       if (!jsonInput.trim()) {
         setFeedback({ type: "error", message: "Please provide JSON data." });
         return;
       }
 
-      setLoading(true);
-      setImportErrors([]);
+      setLoading(true); // Set loading state to true
+      setImportErrors([]); // Reset any previous import errors
 
-      const data = parseJsonInput();
+      const data = parseJsonInput(); // Parse the JSON input
 
+      // Validate the data based on the entity type
       if (!validateData(data)) {
         setFeedback({ type: "error", message: "Data validation failed." });
         setLoading(false);
         return;
       }
 
-      const endpoint = getApiEndpoint(entityType);
+      const endpoint = getApiEndpoint(entityType); // Get the API endpoint
 
+      // Check if the user is authenticated
       if (!keycloak?.authenticated) {
         console.error("Unauthorized access");
         axios.defaults.headers.common["Authorization"] = null;
         setLoading(false);
         return;
       } else {
+        // Set the Authorization header with the Keycloak token
         axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${keycloak?.token}`;
       }
 
-      let errors = [];
+      let errors = []; // Array to collect any errors during import
       for (let i = 0; i < data.length; i++) {
         try {
           let item = data[i];
@@ -228,28 +248,30 @@ const BatchImport: React.FC = () => {
               headers: { "Content-Type": "application/json" },
             });
           } else {
+            // For other entity types, send the item as JSON
             await axios.post(endpoint, item, {
               headers: { "Content-Type": "application/json" },
             });
           }
         } catch (error: any) {
-          errors.push({ index: i + 1, error: error.message });
+          errors.push({ index: i + 1, error: error.message }); // Collect errors with item index
         }
       }
 
+      // Provide feedback based on success or errors
       if (errors.length === 0) {
         setFeedback({
           type: "success",
           message: "Data imported successfully.",
         });
-        setJsonInput("");
-        setFileInput(null);
+        setJsonInput(""); // Clear the JSON input
+        setFileInput(null); // Clear the file input
       } else {
         setFeedback({
           type: "error",
           message: `${errors.length} item(s) failed to import.`,
         });
-        setImportErrors(errors);
+        setImportErrors(errors); // Set import errors to display
       }
     } catch (error: any) {
       setFeedback({
@@ -257,7 +279,7 @@ const BatchImport: React.FC = () => {
         message: error.message || "An error occurred during import.",
       });
     } finally {
-      setLoading(false);
+      setLoading(false); // Set loading state to false
     }
   };
 
@@ -281,6 +303,7 @@ const BatchImport: React.FC = () => {
         Batch Import
       </Typography>
 
+      {/* Entity Type Selection */}
       <FormControl fullWidth margin="dense">
         <InputLabel>Entity Type</InputLabel>
         <Select
@@ -296,6 +319,7 @@ const BatchImport: React.FC = () => {
         </Select>
       </FormControl>
 
+      {/* JSON Data Input */}
       <TextField
         label="JSON Data"
         multiline
@@ -307,6 +331,7 @@ const BatchImport: React.FC = () => {
         onChange={(e) => setJsonInput(e.target.value)}
       />
 
+      {/* File Upload Section */}
       <Box sx={{ mt: 2 }}>
         <input
           accept=".json"
@@ -323,6 +348,7 @@ const BatchImport: React.FC = () => {
         {fileInput && <Typography variant="body2">{fileInput.name}</Typography>}
       </Box>
 
+      {/* Import Button */}
       <Button
         variant="contained"
         color="primary"
@@ -334,6 +360,7 @@ const BatchImport: React.FC = () => {
         Import
       </Button>
 
+      {/* Display Import Errors if any */}
       {importErrors.length > 0 && (
         <Box sx={{ mt: 2 }}>
           <Typography variant="h6">Import Errors:</Typography>
@@ -347,6 +374,7 @@ const BatchImport: React.FC = () => {
         </Box>
       )}
 
+      {/* Feedback Snackbar */}
       <Snackbar
         open={!!feedback}
         autoHideDuration={6000}
