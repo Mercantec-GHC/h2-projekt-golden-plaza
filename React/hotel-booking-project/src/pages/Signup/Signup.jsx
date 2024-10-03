@@ -2,13 +2,28 @@ import './Signup.css'
 import InputField from "../../components/Signup & Login/InputField.jsx";
 import FormTitle from "../../components/Signup & Login/FormTitle.jsx";
 import FormButton from "../../components/Signup & Login/FormButton.jsx";
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import axios from 'axios';
+import { useEffect, useState, useContext, useRef } from 'react'
+import { KeycloakContext } from '../../App';
 
 function Signup() {
     const [email, setEmail] = useState(''); /* useState to keep track of the e-mail provided by the user */
     const [password, setPassword] = useState(''); /* useState to keep track of the password provided by the user */
+
+    const { init, keycloak, setKeycloak } = useContext(KeycloakContext);
+    const [isInitialized, setIsInitialized] = useState(false);
+    const isRun = useRef(false);
+
+
+    useEffect(() => {
+        if (isRun.current || keycloak.authenticated) return;
+        
+        isRun.current = true;
+        init();
+        setIsInitialized(true);
+
+    }, [keycloak, init, isInitialized]);
 
     const handleSubmit = async (e) => {
         e.preventDefault()
