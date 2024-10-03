@@ -7,9 +7,11 @@ const MailForm = () => {
     const [emailBody, setEmailBody] = useState('');
     const [response, setResponse] = useState('');
 
+    //When the button is clicked then the sequence below runs and sends a mail.
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        //Strings
         const emailData = {
             emailToId,
             emailToName,
@@ -17,6 +19,7 @@ const MailForm = () => {
             emailBody
         };
 
+        // Using a post request via the MailController. 
         try {
             const res = await fetch('https://localhost:7207/Mail', {
                 method: 'POST',
@@ -27,12 +30,14 @@ const MailForm = () => {
                 body: JSON.stringify(emailData)
             });
 
+            //Checks if the result is valid or not.
             if (res.ok) {
                 //const result = await res.json();
                 setResponse('Email sent successfully!');
             } else {
                 setResponse('Failed to send email.');
             }
+        //Error handling
         } catch (error) {
             console.error('Error:', error);
             setResponse('An error occurred while sending the email.');
@@ -43,6 +48,7 @@ const MailForm = () => {
         <div>
             <form onSubmit={handleSubmit}>
                 <div>
+                    {/* Each of the text boxes apply the text to a set variable, and after pressing the button, then that data will be used in the sequence above. */ }
                     <label>Email To (ID): </label>
                     <input
                         type="text"
