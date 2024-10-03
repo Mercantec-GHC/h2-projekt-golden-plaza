@@ -21,7 +21,7 @@ public class Booking
     public int RoomId { get; set; }
 
     // Foreign key to Customer
-    public string UserId { get; set; }
+   // public string UserId { get; set; }
 }
 
 // Foreign Key = Database relationship 
