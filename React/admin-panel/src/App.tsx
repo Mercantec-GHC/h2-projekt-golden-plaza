@@ -32,7 +32,6 @@ function App() {
           <Route path="/roommanagement" element={<RoomManagement />} />
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/roomtypes" element={<RoomTypeManagement />} />
-          <Route path="/tickets" element={<Tickets />} />
           <Route path="/batch-import" element={<BatchImport />} />
         </Routes>
       </AuthProvider>
