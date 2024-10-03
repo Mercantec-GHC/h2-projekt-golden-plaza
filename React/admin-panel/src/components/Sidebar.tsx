@@ -19,6 +19,7 @@ import {
   Book,
   Menu,
   Login,
+  ConfirmationNumber,
   Category,
   UploadFile,
 } from "@mui/icons-material";
@@ -48,6 +49,7 @@ const Sidebar: React.FC = () => {
     { text: "Home", icon: <Home />, path: "/" },
     { text: "Rooms", icon: <Hotel />, path: "/roommanagement" },
     { text: "Room Types", icon: <Category />, path: "/roomtypes" },
+    { text: "Tickets", icon: <ConfirmationNumber />, path: "/tickets" },
     { text: "Bookings", icon: <Book />, path: "/bookings" },
     { text: "Batch Import", icon: <UploadFile />, path: "/batch-import" },
     // Add more menu items as needed
