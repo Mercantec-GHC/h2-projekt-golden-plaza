@@ -16,7 +16,11 @@ namespace API.Controllers
         {
             _context = context;
         }
-        //fetch all tickets
+        /// <summary>
+        /// fetches all tickets.
+        /// </summary>
+        /// <returns>An action result showcasing tickets.</returns>
+        //fetch all tickets, requires login so user will only be able to see their own tickets
         [HttpGet]
         [Authorize]
         public IActionResult GetAll()
@@ -30,7 +34,12 @@ namespace API.Controllers
 
             return Ok(ticket);
         }
-        //fetch the id of a ticket
+        /// <summary>
+        /// get tickets based on UserSid.
+        /// </summary>
+        /// <param name="userSid">Is used to Fetch the users Sid.</param>
+        /// <returns>An action result showcasing all tickets for that user.</returns>
+        //fetch the id of a ticket with userSid
         [HttpGet("{userSid}")]
         public IActionResult GetById([FromRoute] string userSid)
         {
@@ -43,7 +52,12 @@ namespace API.Controllers
 
             return Ok(ticket);
         }
-        // adding a new ticket
+        /// <summary>
+        /// Adds a ticket.
+        /// </summary>
+        /// <param name="ticket">The call to the ticket class.</param>
+        /// <returns>An action result with the newly created ticket.</returns>
+        // adding a new ticket, requires login to perform action
         [HttpPost]
         [Authorize]
         public IActionResult Post([FromBody] Ticket ticket)
@@ -52,7 +66,12 @@ namespace API.Controllers
             _context.SaveChanges();
             return Ok(ticket);
         }
-        // updating an already existing ticket, this can also be a part of the message/reply feature for now
+        /// <summary>
+        /// Updates an existing ticket.
+        /// </summary>
+        /// <param name="ticket">the call for the ticket class.</param>
+        /// <returns>An action result with the updated ticket.</returns>
+        // updating an already existing ticket, requires login in order to perform
         [HttpPut]
         [Authorize]
         public IActionResult Update([FromBody] Ticket ticket)
@@ -61,7 +80,12 @@ namespace API.Controllers
             _context.SaveChanges();
             return Ok(ticket);
         }
-        // removing/deleting an existing ticket, may want to do so in another way in the future, where it instead stores the ticket
+        /// <summary>
+        /// Delete a specific ticket.
+        /// </summary>
+        /// <param name="id">The id of the ticket to remove.</param>
+        /// <returns>An action result with the ticket selected removed.</returns>
+        // removing/deleting an existing ticket, may want to do so in another way in production, where it instead stores the ticket
         [HttpDelete("{id}")]
         [Authorize]
         public IActionResult Delete(int id)

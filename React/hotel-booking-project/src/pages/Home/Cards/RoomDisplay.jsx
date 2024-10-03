@@ -6,32 +6,37 @@ import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import image1 from '../../../assets/standard.jpg'; //Hardcoded image path
+import image2 from '../../../assets/deluxe.jpg'; //Hardcoded image path
+import image3 from '../../../assets/suite.jpg'; //Hardcoded image path
 
 const RoomDisplay = () => {
     const navigate = useNavigate();
     const [selectedRoomType, setSelectedRoomType] = useState('');
 
+    //display text on the page depending on roomtype, all hardcoded
     const roomTypes = [
         {
             id: '1',
             title: 'Standard Room',
             description: 'A cozy standard room for a comfortable stay.',
-            image: '../../assets/standard.jpg', // Hardcoded image path
+            image: image1, //call the image path
         },
         {
             id: '2',
             title: 'Deluxe Room',
             description: 'A spacious deluxe room with premium amenities.',
-            image: '../../assets/deluxe.jpg', // Hardcoded image path
+            image: image2, //call the image path
         },
         {
             id: '3',
             title: 'Premium Room',
             description: 'An elegant premium room with luxury features.',
-            image: '../../assets/suite.jpg', // Hardcoded image path
+            image: image3, //call the image path
         },
     ];
 
+    //fetches the roomType selected and redirects to booking page with the selected roomType
     const handleRoomSelect = (roomType) => {
         setSelectedRoomType(roomType.id);
         navigate(`/booking?roomTypeId=${roomType.id}`);
