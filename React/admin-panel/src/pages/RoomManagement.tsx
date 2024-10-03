@@ -1,7 +1,8 @@
 // src/components/RoomManagement.tsx
 
 import React, { useState, useEffect } from "react";
-import { CreateRoomDTO, Room, RoomType } from "../interfaces/room";
+import { CreateRoomDTO, Room } from "../interfaces/room";
+import { RoomType } from "../interfaces/roomtype";
 import axios, { AxiosResponse } from "axios";
 import {
   Autocomplete,
