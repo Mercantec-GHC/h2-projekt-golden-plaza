@@ -13,7 +13,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import { useLocation } from 'react-router-dom'; // Import useLocation for query params
+import { useLocation } from 'react-router-dom'; //Import useLocation for query params
 
 export default function MediaCard({ title, description, image, facilities }) {
     const [open, setOpen] = useState(false);
@@ -26,33 +26,33 @@ export default function MediaCard({ title, description, image, facilities }) {
     const [bookings, setBookings] = useState([]);
     const [availableRoomId, setAvailableRoomId] = useState(null);
     const [roomPrice, setRoomPrice] = useState(0);
-    const [isLocked, setIsLocked] = useState(false); // Locking the dropdown
+    const [isLocked, setIsLocked] = useState(false); //Locking the dropdown
 
-    const location = useLocation(); // Hook to access URL query params
+    const location = useLocation(); //Hook to access URL query params
 
-    // Modal controls
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
 
+    //checks roomtype and then assigns a value for selected type 
     const handleRoomTypeChange = (event) => {
         setRoomType(event.target.value);
-        setRoomPrice(getRoomPrice(event.target.value)); // Set room price based on selected type
+        setRoomPrice(getRoomPrice(event.target.value));
     };
 
     const getRoomPrice = (type) => {
         switch (type) {
             case '1':
-                return 100; // Standard price per night
+                return 100; //Standard price per night
             case '2':
-                return 150; // Deluxe price per night
+                return 150; //Deluxe price per night
             case '3':
-                return 200; // Premium price per night
+                return 200; //Premium price per night
             default:
                 return 0;
         }
     };
 
-    // Fetch current bookings from the database
+    //Fetch current bookings from the database
     useEffect(() => {
         const fetchBookings = async () => {
             try {
@@ -66,31 +66,31 @@ export default function MediaCard({ title, description, image, facilities }) {
         fetchBookings();
     }, []);
 
-    // Check if room type is selected from the query parameter and set it
+    //Check if room type is selected from the query parameter and set it
     useEffect(() => {
         const queryParams = new URLSearchParams(location.search);
         const roomTypeId = queryParams.get('roomTypeId');
 
         if (roomTypeId) {
             setRoomType(roomTypeId);
-            setRoomPrice(getRoomPrice(roomTypeId)); // Set price based on room type
-            setIsLocked(true); // Lock the dropdown when a room type is selected
+            setRoomPrice(getRoomPrice(roomTypeId)); //Set price based on room type
+            setIsLocked(true); //Lock the dropdown when a room type is selected from the RoomDisplay page
         }
     }, [location.search]);
 
-    // Check availability based on room type and dates
+    //Check availability based on room type and dates
     const checkAvailability = async () => {
         if (!startDate || !endDate || !roomType) {
             setAvailabilityMessage('Please select room type, check-in, and check-out dates.');
             return;
         }
 
-        // Fetch available room IDs based on room type and dates
+        //Fetch available rooms based on room type and dates
         try {
             const response = await fetch(`https://localhost:7207/api/Rooms?roomTypeId=${roomType}`);
             const rooms = await response.json();
 
-            // Check for overlapping bookings
+            //Check for overlapping bookings
             const availableRooms = rooms.filter((room) => {
                 return !bookings.some((booking) =>
                     booking.roomId === room.id &&
@@ -98,8 +98,10 @@ export default function MediaCard({ title, description, image, facilities }) {
                 );
             });
 
+            //offer room to the customer
             if (availableRooms.length > 0) {
-                setAvailableRoomId(availableRooms[0].id); // Choose the first available room
+                setAvailableRoomId(availableRooms[0].id); //Choose the first available room
+                //calculate time and then assign the price, and display it to customer
                 const numberOfNights = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
                 setTotalPrice(numberOfNights * roomPrice);
                 setAvailabilityMessage('Room is available. Room ID: ' + availableRooms[0].id);
@@ -112,14 +114,14 @@ export default function MediaCard({ title, description, image, facilities }) {
         }
     };
 
-    // Booking the room
+    //Booking the room
     const bookRoom = async () => {
         if (availableRoomId === null || totalPrice === null) {
             setAvailabilityMessage('Please check availability first.');
             return;
         }
 
-        // Create booking
+        //Create booking
         const booking = {
             roomId: availableRoomId,
             checkIn: startDate.toISOString(),
@@ -130,6 +132,7 @@ export default function MediaCard({ title, description, image, facilities }) {
         };
 
         try {
+            //send data from above to the API
             const response = await fetch(`https://localhost:7207/api/Booking`, {
                 method: 'POST',
                 headers: {
@@ -138,15 +141,16 @@ export default function MediaCard({ title, description, image, facilities }) {
                 body: JSON.stringify(booking),
             });
 
+            //if successful booking, tell the user with some text, and then reset the form so another booking can be created
             if (response.ok) {
-                setBookings((prevBookings) => [...prevBookings, booking]); // Update local state
+                setBookings((prevBookings) => [...prevBookings, booking]);
                 setAvailabilityMessage('Room booked successfully.');
                 setStartDate(null);
                 setEndDate(null);
                 setRoomType('');
                 setTotalPrice(null);
                 setAvailableRoomId(null);
-                setIsLocked(false); // Unlock dropdown for future bookings
+                setIsLocked(false); //Unlock dropdown for additional bookings
             } else {
                 const errorData = await response.json();
                 setAvailabilityMessage(errorData.message || 'Failed to book the room.');
@@ -156,6 +160,7 @@ export default function MediaCard({ title, description, image, facilities }) {
         }
     };
 
+    //pure design
     return (
         <Card
             sx={{
@@ -237,7 +242,7 @@ export default function MediaCard({ title, description, image, facilities }) {
                         onChange={handleRoomTypeChange}
                         displayEmpty
                         fullWidth
-                        disabled={isLocked} // Disable if locked
+                        disabled={isLocked}
                     >
                         <MenuItem value="" disabled>
                             Select Room Type
