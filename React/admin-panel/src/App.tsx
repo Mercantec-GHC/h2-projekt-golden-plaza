@@ -4,7 +4,7 @@ import { createContext } from "react";
 import Home from "./pages/Home";
 import RoomManagement from "./pages/RoomManagement.tsx";
 import RoomTypeManagement from "./pages/RoomTypeManagement.tsx";
-import BatchImport from "./pages/BachImport.tsx";
+import BatchImport from "./pages/BatchImport.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Tickets from "./pages/Tickets.tsx";
