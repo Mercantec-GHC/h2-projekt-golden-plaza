@@ -28,6 +28,7 @@ function App() {
       <AuthProvider>
         <Sidebar />
         <Routes>
+          {/* The Routes component is where you define the routes for your app */}
           <Route path="/" element={<Home />} />
           <Route path="/roommanagement" element={<RoomManagement />} />
           <Route path="/tickets" element={<Tickets />} />
