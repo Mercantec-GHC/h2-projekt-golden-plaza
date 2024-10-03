@@ -2,6 +2,7 @@
 
 namespace API.DTO
 {
+    //Used to secure that when editing or handling rooms, so that only the required information is used.
     public class RoomDTO
     {
         public int Id { get; set; }

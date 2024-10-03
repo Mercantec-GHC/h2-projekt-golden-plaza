@@ -2,6 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace DomainModels.Models.Entities;
 
+//Class to handle booking
 public class Booking
 {
 
@@ -14,6 +15,8 @@ public class Booking
     public bool IsReserved { get; set; }
 
     //public Customer Customer { get; set; }
+
+    //Inserted JsonIgnore, to avoid errors in post requests for rooms and bookings.
     [JsonIgnore]
     public Room? Room { get; set; } // Navigation property to Room
 
@@ -21,7 +24,7 @@ public class Booking
     public int RoomId { get; set; }
 
     // Foreign key to Customer
-    public string UserId { get; set; }
+   // public string UserId { get; set; }
 }
 
 // Foreign Key = Database relationship 
