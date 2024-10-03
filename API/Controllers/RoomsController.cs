@@ -39,7 +39,7 @@ public class RoomsController : ControllerBase
     public async Task<ActionResult<Room>> GetRoom(int id)
     {
         var room = await _context.Rooms //Query the database for the room with the specified ID
-                                        //.Include(r => r.Availabilities)  // Ensure availabilities are included
+            //.Include(r => r.Availabilities)  // Ensure availabilities are included
             .FirstOrDefaultAsync(r => r.Id == id);// Use the FirstOrDefaultAsync method to retrieve the first room that matches the specified ID
 
         if (room == null)
