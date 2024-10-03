@@ -1,7 +1,10 @@
 using API.Data;
+using DomainModels.DTO;
 using DomainModels.Models.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 namespace API.Controllers
 {
@@ -41,6 +44,12 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<Booking>> PostBooking(Booking booking)
         {
+            if (IsBookingOverlapping(booking))
+            {
+                return BadRequest("Booking is overlapping with another booking");
+            }
+
+
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
@@ -49,14 +58,28 @@ namespace API.Controllers
 
         // PUT: api/Booking/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutBooking(int id, Booking booking)
+        public async Task<IActionResult> PutBooking(int id, BookingDTO bookingDTO)
         {
-            if (id != booking.Id)
+            if (id != bookingDTO.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(booking).State = EntityState.Modified;
+            if (IsBookingOverlapping(bookingDTO))
+            {
+                return BadRequest("Booking is overlapping with another booking");
+            }
+
+            // Find the booking in the database
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                return NotFound("Booking not found.");
+            }
+
+            // Update the booking date
+            booking.CheckIn = bookingDTO.CheckIn;
+            booking.CheckOut = bookingDTO.CheckOut;
 
             try
             {
@@ -66,19 +89,21 @@ namespace API.Controllers
             {
                 if (!BookingExists(id))
                 {
-                    return NotFound();
+                    return NotFound("Booking not found during update.");
                 }
-                else
-                {
-                    throw;
-                }
+                throw; // Rethrow the exception if not a concurrency issue
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, $"Database update error: {ex.Message}");
             }
 
-            return NoContent();
+            return NoContent(); // Return 204 No Content on success
         }
 
         // DELETE: api/Booking/5
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<IActionResult> DeleteBooking(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
@@ -97,62 +122,21 @@ namespace API.Controllers
         {
             return _context.Bookings.Any(e => e.Id == id);
         }
-    }
 
-
-    // DELETE: api/Booking/5
-    [HttpDelete("{id}")]
-    [Authorize]
-    public async Task<IActionResult> DeleteBooking(int id)
-    {
-        var booking = await _context.Bookings.FindAsync(id);
-        if (booking == null)
+        private bool IsBookingOverlapping(BookingDTO newBooking)
         {
-            return NotFound();
+            return _context.Bookings
+                .Any(b => b.RoomId == newBooking.RoomId &&
+                  b.Id != newBooking.Id && // Exclude the current booking when updating
+                  ((newBooking.CheckIn < b.CheckOut) && (newBooking.CheckOut > b.CheckIn)));
         }
 
-        _context.Bookings.Remove(booking);
-        await _context.SaveChangesAsync();
-
-        return NoContent();
-    }
-    [HttpPut("{id}")]
-    [Authorize] // Ensure the user has the right to modify bookings
-    public async Task<IActionResult> UpdateBooking(int id, [FromBody] BookingDTO bookingDTO)
-    {
-        // Check for ID mismatch
-        if (id != bookingDTO.Id)
+        private bool IsBookingOverlapping(Booking newBooking)
         {
-            return BadRequest("ID mismatch.");
+            return _context.Bookings
+                .Any(b => b.RoomId == newBooking.RoomId &&
+                  b.Id != newBooking.Id && // Exclude the current booking when updating
+                  ((newBooking.CheckIn < b.CheckOut) && (newBooking.CheckOut > b.CheckIn)));
         }
-
-        // Find the booking in the database
-        var booking = await _context.Bookings.FindAsync(id);
-        if (booking == null)
-        {
-            return NotFound("Booking not found.");
-        }
-
-        // Update the booking date
-        booking.Date = bookingDTO.Date;
-
-        try
-        {
-            await _context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!BookingExists(id))
-            {
-                return NotFound("Booking not found during update.");
-            }
-            throw; // Rethrow the exception if not a concurrency issue
-        }
-        catch (DbUpdateException ex)
-        {
-            return StatusCode(500, $"Database update error: {ex.Message}");
-        }
-
-        return NoContent(); // Return 204 No Content on success
     }
 }

@@ -34,7 +34,7 @@ namespace API.Controllers
         [HttpGet("{userSid}")]
         public IActionResult GetById([FromRoute] string userSid)
         {
-            var ticket = _context.Tickets.Where(t => t.userSid == userSid);
+            var ticket = _context.Tickets.Where(t => t.UserId == userSid);
             //Just in case null, returns not found
             if (ticket == null)
             {

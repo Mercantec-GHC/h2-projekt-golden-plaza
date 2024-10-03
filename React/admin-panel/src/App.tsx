@@ -4,7 +4,7 @@ import { createContext } from "react";
 import Home from "./pages/Home";
 import RoomManagement from "./pages/RoomManagement.tsx";
 import RoomTypeManagement from "./pages/RoomTypeManagement.tsx";
-import BatchImport from "./pages/BachImport.tsx";
+import BatchImport from "./pages/BatchImport.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Tickets from "./pages/Tickets.tsx";
@@ -28,6 +28,7 @@ function App() {
       <AuthProvider>
         <Sidebar />
         <Routes>
+          {/* The Routes component is where you define the routes for your app */}
           <Route path="/" element={<Home />} />
           <Route path="/roommanagement" element={<RoomManagement />} />
           <Route path="/tickets" element={<Tickets />} />
