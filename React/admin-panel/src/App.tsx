@@ -25,6 +25,7 @@ export const KeycloakContext = createContext<{
 function App() {
   return (
     <>
+          {/* AuthProvider is used to make sure the user is authorized to access these pages. Specifically if they are logged in. */ }
       <AuthProvider>
         <Sidebar />
         <Routes>

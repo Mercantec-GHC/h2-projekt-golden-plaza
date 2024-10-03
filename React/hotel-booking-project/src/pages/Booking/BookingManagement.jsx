@@ -11,7 +11,7 @@ const BookingManagement = () => {
 
     axios.defaults.baseURL = 'https://localhost:7207/api';
 
-    // Fetch bookings when the component mounts
+    // Fetch bookings
     useEffect(() => {
         fetchBookings();
     }, []);

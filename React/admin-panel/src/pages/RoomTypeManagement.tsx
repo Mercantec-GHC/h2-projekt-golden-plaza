@@ -24,18 +24,23 @@ const RoomTypeManagement: React.FC = () => {
   const [currentRoomType, setCurrentRoomType] = useState<Partial<RoomType>>({});
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  //Fetch Room Types
   useEffect(() => {
     fetchRoomTypes();
   }, []);
 
+  //Method to fetch the room types
   const fetchRoomTypes = async () => {
-    setLoading(true);
+      setLoading(true);
+    //Requests the room types
     try {
       const response = await axios.get<RoomType[]>("/api/RoomType");
       console.log("Room Types:", response.data);
-      setRoomTypes(response.data);
+        setRoomTypes(response.data);
+     //Error handling
     } catch (error) {
       console.error("Error fetching room types:", error);
+     //When the data has been recieved, then it sets the loading to false, meaning it allows it to display the room types.
     } finally {
       setLoading(false);
     }
@@ -48,46 +53,56 @@ const RoomTypeManagement: React.FC = () => {
     });
   };
 
+  // Allows admin to add another room type
   const handleAddClick = () => {
     setCurrentRoomType({});
     setIsEditing(false);
     setOpenDialog(true);
   };
 
+  // Allows admin to edit room type
   const handleEditClick = (roomType: RoomType) => {
     setCurrentRoomType(roomType);
     setIsEditing(true);
     setOpenDialog(true);
   };
 
+  //Allows admin to delete room type, via the ID.
   const handleDelete = async (id: number) => {
     try {
       await axios.delete(`/api/RoomType/${id}`);
       fetchRoomTypes();
+    //Error handling
     } catch (error) {
       console.error("Error deleting room type:", error);
     }
   };
 
+  //Closes dialog
   const handleDialogClose = () => {
     setOpenDialog(false);
     setCurrentRoomType({});
   };
 
+  //Handles the submition.
   const handleFormSubmit = async () => {
     try {
       const roomTypeName = currentRoomType.roomTypeName?.trim();
+      //Error handling, if roomTypeName is null
       if (!roomTypeName) {
         alert("Room Type Name is required");
         return;
       }
 
+      //Converts the requestBody to JSON
       const requestBody = JSON.stringify(roomTypeName);
 
+      //PUT REQUEST
       if (isEditing && currentRoomType.id !== undefined) {
         await axios.put(`/api/RoomType/${currentRoomType.id}`, requestBody, {
           headers: { "Content-Type": "application/json" },
         });
+        //POST REQUEST
       } else {
         await axios.post("/api/RoomType", requestBody, {
           headers: { "Content-Type": "application/json" },
@@ -95,6 +110,7 @@ const RoomTypeManagement: React.FC = () => {
       }
       fetchRoomTypes();
       handleDialogClose();
+      //Error handling
     } catch (error) {
       console.error("Error saving room type:", error);
     }
@@ -110,7 +126,8 @@ const RoomTypeManagement: React.FC = () => {
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-        <>
+          <>
+              {/* Buttons to handle functions */ }
           <Button
             color="primary"
             size="small"
