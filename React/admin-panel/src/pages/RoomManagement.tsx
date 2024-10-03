@@ -1,5 +1,6 @@
 // src/components/RoomManagement.tsx
 
+// Here is all the imports that are needed for this component
 import React, { useState, useEffect } from "react";
 import { CreateRoomDTO, Room } from "../interfaces/room";
 import { RoomType } from "../interfaces/roomtype";
@@ -23,22 +24,39 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { KeycloakContext } from "../App";
 
+
 const RoomManagement: React.FC = () => {
+  // Set Axios base URL (optional if API base is the same across the app)
   axios.defaults.baseURL = "https://localhost:7207";
 
+  // rooms, set to an empty array of Room objects
   const [rooms, setRooms] = useState<Room[]>([]);
+
+  // roomTypes, set to an empty array of RoomType objects
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
+
+  // facilityOptions, set to an empty array of strings
   const [facilityOptions, setFacilityOptions] = useState<string[]>([]);
 
+  // openDialog, set to false
   const [openDialog, setOpenDialog] = useState<boolean>(false);
+
+  // currentRoom, set to an empty object
   const [currentRoom, setCurrentRoom] = useState<Partial<Room>>({});
+
+  // isEditing, set to false
   const [isEditing, setIsEditing] = useState<boolean>(false);
 
+  // Setting the keycloak context. can be used to access the functions and variables in the KeycloakContext
   const { keycloak } = React.useContext(KeycloakContext);
 
+  // columns, an array of objects that store the field, headerName, width, and renderCell
   const columns: GridColDef[] = [
+    // Room Number column
     { field: "roomNumber", headerName: "Room Number", width: 130 },
+    // Capacity column
     { field: "capacity", headerName: "Capacity", width: 100 },
+    // roomType column
     {
       field: "roomType",
       headerName: "Room Type",
@@ -46,6 +64,7 @@ const RoomManagement: React.FC = () => {
       valueGetter: (value, row: Room) =>
         capitalize(row.roomType?.roomTypeName) || "ERROR",
     },
+    // Price Per Night column
     { field: "pricePerNight", headerName: "Price Per Night", width: 150 },
     {
       field: "facilities",
@@ -79,6 +98,7 @@ const RoomManagement: React.FC = () => {
       ),
     },
   ];
+
 
   useEffect(() => {
     fetchRooms();
@@ -176,11 +196,13 @@ const RoomManagement: React.FC = () => {
 
   // Handle Form Submit
   const handleFormSubmit = async () => {
+    // Check if user is authenticated, if not, return
     if (keycloak?.authenticated === false) {
       console.error("Unauthorized access");
       axios.defaults.headers.common["Authorization"] = null;
       return;
     } else {
+      // Set the Authorization header with the token
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${keycloak?.token}`;
