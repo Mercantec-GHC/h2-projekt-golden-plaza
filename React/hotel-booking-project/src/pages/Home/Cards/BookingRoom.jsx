@@ -14,6 +14,7 @@ import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useLocation } from 'react-router-dom'; //Import useLocation for query params
+import image from '../../../assets/standard.jpg';
 
 export default function MediaCard() {
     const [open, setOpen] = useState(false);
@@ -30,7 +31,6 @@ export default function MediaCard() {
 
     const title = 'Book a Room';
     const description = 'Select a room type, check-in and check-out dates, and enter your email to book a room.';
-    const image = 'https://source.unsplash.com/345x190/?hotel-room'; //Random image
     const facilities = ['Wi-Fi', 'TV', 'Air Conditioning', 'Mini Bar']; //Facilities for the room
 
     const location = useLocation(); //Hook to access URL query params
@@ -85,8 +85,8 @@ export default function MediaCard() {
 
     //Check availability based on room type and dates
     const checkAvailability = async () => {
-        if (!startDate || !endDate || !roomType) {
-            setAvailabilityMessage('Please select room type, check-in, and check-out dates.');
+        if (!startDate || !endDate) {
+            setAvailabilityMessage('Please select check-in and check-out dates.');
             return;
         }
 
@@ -240,22 +240,11 @@ export default function MediaCard() {
                     }}
                 >
                     <Typography id="modal-title" variant="h6" component="h2">
-                        Select Room Type and Dates
+                        Select Check In and Check Out Dates
                     </Typography>
-                    <Select
-                        value={roomType}
-                        onChange={handleRoomTypeChange}
-                        displayEmpty
-                        fullWidth
-                        disabled={isLocked}
-                    >
-                        <MenuItem value="" disabled>
-                            Select Room Type
-                        </MenuItem>
-                        <MenuItem value="1">Standard</MenuItem>
-                        <MenuItem value="2">Deluxe</MenuItem>
-                        <MenuItem value="3">Premium</MenuItem>
-                    </Select>
+                    <Typography id="modal-description" variant="body2" color="textSecondary">
+                        Check in:
+                    </Typography>
                     <DatePicker
                         selected={startDate}
                         onChange={(date) => setStartDate(date)}
@@ -265,6 +254,9 @@ export default function MediaCard() {
                         placeholderText="Check-in Date"
                         inline
                     />
+                    <Typography variant="body2" color="textSecondary">
+                        Check out:
+                    </Typography>
                     <DatePicker
                         selected={endDate}
                         onChange={(date) => setEndDate(date)}
@@ -274,13 +266,6 @@ export default function MediaCard() {
                         minDate={startDate}
                         placeholderText="Check-out Date"
                         inline
-                    />
-                    <TextField
-                        label="Email"
-                        variant="outlined"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        fullWidth
                     />
                     <Button onClick={checkAvailability} variant="contained" color="primary">
                         Check Availability
