@@ -1,5 +1,6 @@
 // src/components/Sidebar.tsx
 
+// Here is all the imports that are needed for this component
 import React from "react";
 import {
   Button,
@@ -32,30 +33,32 @@ const drawerWidth = 240;
 
 // Sidebar functional component
 const Sidebar: React.FC = () => {
-  // React Router's navigation hook
+
+  // navigate is a function that allows you to navigate to a different page
   const navigate = useNavigate();
-
-  // Accessing theme and checking if the current screen size is mobile
+  // theme is a variable that stores the current theme
   const theme = useTheme();
+  // isMobile is a boolean that is true if the screen size is less than or equal to
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  // State to track whether the sidebar is open or closed in mobile view
+  
+  // mobileOpen is a boolean that is true if the mobile drawer is open
   const [mobileOpen, setMobileOpen] = React.useState(false);
-
-  // Access Keycloak instance and init function from context for authentication
+  // keycloak and init are variables that store the keycloak instance and the init function
   const { keycloak, init } = React.useContext(KeycloakContext);
 
-  // Toggles the mobile sidebar drawer
+  // handleDrawerToggle is a function that toggles the mobile drawer
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen); // Toggle the state between true/false to open/close
   };
 
-  // Initiates login when the login button is clicked
+
+  // handleLoginClick is a function that initializes the keycloak instance
   const handleLoginClick = () => {
-    init(); // Trigger Keycloak login using the init function
+    init(); 
   };
 
-  // Define the list of menu items with their associated icons and paths
+
+  // menuItems is an array of objects that store the text, icon, and path of each
   const menuItems = [
     { text: "Home", icon: <Home />, path: "/" }, // Navigate to home
     { text: "Rooms", icon: <Hotel />, path: "/roommanagement" }, // Navigate to room management
@@ -66,14 +69,14 @@ const Sidebar: React.FC = () => {
     // Add more menu items as needed
   ];
 
-  // Content of the sidebar drawer
+  // drawerContent is a JSX element that contains the sidebar content
   const drawerContent = (
     <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
       <Toolbar /> {/* Placeholder to account for the top toolbar */}
       <Divider /> {/* Divider to separate sections */}
       <Box sx={{ flexGrow: 1 }}>
         <List>
-          {/* Mapping through menu items to create clickable list items */}
+          {/* Maps through the menuItems array and creates a ListItemButton for each item */}
           {menuItems.map((item) => (
             <ListItemButton
               component="nav" // HTML element for the list item button
@@ -118,7 +121,7 @@ const Sidebar: React.FC = () => {
 
   return (
     <>
-      {/* If on mobile, use a temporary drawer that can be toggled */}
+    {/* If the screen size is less than or equal to sm then it will show a drawer that can be toggled */}
       {isMobile ? (
         <>
           {/* Menu button to open the sidebar in mobile view */}
@@ -151,7 +154,8 @@ const Sidebar: React.FC = () => {
           </Drawer>
         </>
       ) : (
-        // Permanent drawer for desktop view, always visible
+
+        // If the screen size is greater than sm then it will show a permanent drawer
         <Drawer
           variant="permanent" // Permanent drawer for desktop devices
           sx={{
