@@ -100,11 +100,18 @@ public class RoomsController : ControllerBase
     [Authorize]
     public async Task<ActionResult<Room>> PostRoom(RoomDTO roomDTO)
     {
+        var roomType = await _context.RoomType.FirstOrDefaultAsync(rt => rt.Id == roomDTO.RoomTypeId);
+
+        if (roomType == null)
+        {
+            return BadRequest("Room Type does not exist");
+        }
+
         //We update the room objects with the new values from the RoomDTO object.
         var room = new Room
         {
             Capacity = roomDTO.Capacity,
-            RoomType = roomDTO.RoomType,
+            RoomType = roomType,
             RoomNumber = roomDTO.RoomNumber,
             PricePerNight = roomDTO.PricePerNight,
             Facilities = roomDTO.Facilities
