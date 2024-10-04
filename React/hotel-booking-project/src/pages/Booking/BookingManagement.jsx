@@ -43,7 +43,11 @@ const BookingManagement = () => {
         try {
             const updatedBooking = {
                 id: booking.id,
-                date: new Date(booking.date).toISOString()
+                checkIn: new Date(booking.checkIn).toISOString(), // Convert to UTC ISO string
+                checkOut: new Date(booking.checkOut).toISOString(), // Convert to UTC ISO string
+                price: booking.price,
+                roomId: booking.roomId,
+                isReserved: booking.isReserved,
             };
 
             //Authentication
@@ -57,10 +61,11 @@ const BookingManagement = () => {
             // Make the PUT request to update the booking
             const response = await axios.put(`/Booking/${booking.id}`, updatedBooking, config);
 
-            // Updates the booking through ID
-            setBookings(bookings.map(b => (b.id === booking.id ? response.data : b)));
-            setEditBooking(null);
-        //Error handling
+            // Update the local bookings state with the updated booking
+            setBookings(prevBookings =>
+                prevBookings.map(b => (b.id === booking.id ? response.data : b))
+            );
+            setEditBooking(null); // Clear the edit state after saving
         } catch (error) {
             setError('Failed to update booking');
             console.error('Update Booking Error:', error.response?.data || error.message);
@@ -79,10 +84,9 @@ const BookingManagement = () => {
                         authorization: `Bearer ${keycloak.token}`
                     }
                 };
-                //Deletes the booking
-                await axios.delete(`/Booking/${id}`, config);
-                setBookings(bookings.filter(b => b.id !== id)); 
-            //Error handling
+              
+                await axios.delete(`/Booking/${id}`, config); // Delete the booking
+                setBookings(prevBookings => prevBookings.filter(b => b.id !== id)); // Remove booking from the state
             } catch (error) {
                 setError('Failed to cancel booking');
             }
@@ -113,13 +117,18 @@ const BookingManagement = () => {
                         <ul>
                             {bookings.map((booking) => (
                                 <li key={booking.id}>
-                                    {editBooking?.id === booking.id ? (
+                                    {editBooking && editBooking.id === booking.id ? (
                                         <div>
-                                            {/* Only the Date can be edited */}
+                                            {/* Only the date can be edited */ }
                                             <input
                                                 type="datetime-local"
-                                                value={new Date(editBooking.date).toISOString().slice(0, 16)}
-                                                onChange={(e) => setEditBooking({ ...editBooking, date: e.target.value })}
+                                                value={editBooking?.checkIn ? new Date(editBooking.checkIn).toISOString().slice(0, 16) : ''} //convert to ISO string and format
+                                                onChange={(e) => setEditBooking({ ...editBooking, checkIn: e.target.value })}
+                                            />
+                                            <input
+                                                type="datetime-local"
+                                                value={editBooking?.checkOut ? new Date(editBooking.checkOut).toISOString().slice(0, 16) : ''} //convert to ISO string and format
+                                                onChange={(e) => setEditBooking({ ...editBooking, checkOut: e.target.value })}
                                             />
                                             {/* Saves the changes made in the database */ }
                                             <button onClick={() => updateBooking(editBooking)}>Save</button>
@@ -129,10 +138,11 @@ const BookingManagement = () => {
                                     ) : (
                                         <div>
                                             <strong>Room ID:</strong> {booking.roomId} <br />
-                                            <strong>Booking Date:</strong> {new Date(booking.date).toLocaleString()} <br />
+                                            <strong>Check-In:</strong> {new Date(booking.checkIn).toLocaleString()} <br />
+                                            <strong>Check-Out:</strong> {new Date(booking.checkOut).toLocaleString()} <br />
                                             <strong>Price:</strong> ${booking.price} <br />
                                             <strong>Reserved:</strong> {booking.isReserved ? 'Yes' : 'No'} <br />
-                                            <button onClick={() => handleEdit(booking)}>Edit Date</button>
+                                            <button onClick={() => handleEdit(booking)}>Edit Dates</button>
                                             <button onClick={() => cancelBooking(booking.id)}>Cancel Booking</button>
                                         </div>
                                     )}
