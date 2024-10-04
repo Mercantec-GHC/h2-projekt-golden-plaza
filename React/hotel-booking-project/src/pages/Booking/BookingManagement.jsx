@@ -33,12 +33,16 @@ const BookingManagement = () => {
         }
     };
 
-    // Update the booking with the edited date
+    // Update the booking with the edited dates
     const updateBooking = async (booking) => {
         try {
             const updatedBooking = {
                 id: booking.id,
-                date: new Date(booking.date).toISOString() // Convert to UTC ISO string
+                checkIn: new Date(booking.checkIn).toISOString(), // Convert to UTC ISO string
+                checkOut: new Date(booking.checkOut).toISOString(), // Convert to UTC ISO string
+                price: booking.price,
+                roomId: booking.roomId,
+                isReserved: booking.isReserved,
             };
 
             let config = {
@@ -52,8 +56,10 @@ const BookingManagement = () => {
             const response = await axios.put(`/Booking/${booking.id}`, updatedBooking, config);
 
             // Update the local bookings state with the updated booking
-            setBookings(bookings.map(b => (b.id === booking.id ? response.data : b)));
-            setEditBooking(null); // Clear the edit state
+            setBookings(prevBookings =>
+                prevBookings.map(b => (b.id === booking.id ? response.data : b))
+            );
+            setEditBooking(null); // Clear the edit state after saving
         } catch (error) {
             setError('Failed to update booking');
             console.error('Update Booking Error:', error.response?.data || error.message);
@@ -71,7 +77,7 @@ const BookingManagement = () => {
                     }
                 };
                 await axios.delete(`/Booking/${id}`, config); // Delete the booking
-                setBookings(bookings.filter(b => b.id !== id)); // Remove booking from the state
+                setBookings(prevBookings => prevBookings.filter(b => b.id !== id)); // Remove booking from the state
             } catch (error) {
                 setError('Failed to cancel booking');
             }
@@ -100,13 +106,18 @@ const BookingManagement = () => {
                         <ul>
                             {bookings.map((booking) => (
                                 <li key={booking.id}>
-                                    {editBooking?.id === booking.id ? (
+                                    {editBooking && editBooking.id === booking.id ? (
                                         <div>
-                                            {/* Only the Date can be edited */}
+                                            {/* Only the date can be edited */ }
                                             <input
                                                 type="datetime-local"
-                                                value={new Date(editBooking.date).toISOString().slice(0, 16)} // Convert to ISO string and format
-                                                onChange={(e) => setEditBooking({ ...editBooking, date: e.target.value })}
+                                                value={editBooking?.checkIn ? new Date(editBooking.checkIn).toISOString().slice(0, 16) : ''} //convert to ISO string and format
+                                                onChange={(e) => setEditBooking({ ...editBooking, checkIn: e.target.value })}
+                                            />
+                                            <input
+                                                type="datetime-local"
+                                                value={editBooking?.checkOut ? new Date(editBooking.checkOut).toISOString().slice(0, 16) : ''} //convert to ISO string and format
+                                                onChange={(e) => setEditBooking({ ...editBooking, checkOut: e.target.value })}
                                             />
                                             <button onClick={() => updateBooking(editBooking)}>Save</button>
                                             <button onClick={handleCancelEdit}>Cancel</button>
@@ -114,10 +125,11 @@ const BookingManagement = () => {
                                     ) : (
                                         <div>
                                             <strong>Room ID:</strong> {booking.roomId} <br />
-                                            <strong>Booking Date:</strong> {new Date(booking.date).toLocaleString()} <br />
+                                            <strong>Check-In:</strong> {new Date(booking.checkIn).toLocaleString()} <br />
+                                            <strong>Check-Out:</strong> {new Date(booking.checkOut).toLocaleString()} <br />
                                             <strong>Price:</strong> ${booking.price} <br />
                                             <strong>Reserved:</strong> {booking.isReserved ? 'Yes' : 'No'} <br />
-                                            <button onClick={() => handleEdit(booking)}>Edit Date</button>
+                                            <button onClick={() => handleEdit(booking)}>Edit Dates</button>
                                             <button onClick={() => cancelBooking(booking.id)}>Cancel Booking</button>
                                         </div>
                                     )}
