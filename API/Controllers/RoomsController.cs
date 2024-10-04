@@ -1,8 +1,8 @@
 using API.Data;
+using API.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DomainModels.Models.Entities;
-using DomainModels.DTO;
 using Microsoft.AspNetCore.Authorization;
 
 namespace API.Controllers;
@@ -15,17 +15,26 @@ public class RoomsController : ControllerBase
 
     public RoomsController(ApplicationDBContext context)
     {
+        // Fill the DB Context through Dependency Injection
         _context = context;
     }
 
-    // GET: api/Rooms
+    /// <summary>
+    /// Get all Rooms
+    /// </summary>
+    /// <returns>Returns Rooms</returns>
     [HttpGet]
     public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
     {
-        return await _context.Rooms.Include(e => e.RoomType).ToListAsync();
+        //Simple CRUD operation
+        return await _context.Rooms.ToListAsync();
     }
 
-    // GET: api/Rooms/5
+    /// <summary>
+    /// Return room based on ID
+    /// </summary>
+    /// <param name="id">The way we sort the rooms in the database</param>
+    /// <returns>Room</returns>
     [HttpGet("{id}")]
     public async Task<ActionResult<Room>> GetRoom(int id)
     {
@@ -42,32 +51,26 @@ public class RoomsController : ControllerBase
     }
 
 
-    // PUT: api/Rooms/5
+    /// <summary>
+    /// Update Rooms by ID
+    /// </summary>
+    /// <param name="id">The specifc room we try to find</param>
+    /// <param name="room">The Room and information in question</param>
+    /// <returns>No Content</returns>
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> PutRoom(int id, CreateRoomDTO roomDTO)
+    public async Task<IActionResult> PutRoom(int id, Room room)
     {
+        //Error handling
+        if (id != room.Id)
+        {
+            return BadRequest();
+        }
 
-        var room = await _context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
-        var newRoomType = await _context.RoomType.FirstOrDefaultAsync(t => t.Id == roomDTO.RoomTypeId);
-
-
-        if (room == null)
-            return BadRequest("Room not found!");
-
-        if (roomDTO.RoomNumber != 0)
-            room.RoomNumber = roomDTO.RoomNumber;
-        if (roomDTO.Capacity != 0)
-            room.Capacity = roomDTO.Capacity;
-        if (newRoomType != null)
-            room.RoomType = newRoomType;
-        if (roomDTO.Facilities != null)
-            room.Facilities = roomDTO.Facilities;
-        if (roomDTO.PricePerNight != 0)
-            room.PricePerNight = roomDTO.PricePerNight;
-
+        //Simple Crud Operation
         _context.Rooms.Update(room);
 
+        //Saves changes or discards them.
         try
         {
             await _context.SaveChangesAsync();
@@ -88,19 +91,23 @@ public class RoomsController : ControllerBase
     }
 
 
-    // POST: api/Rooms
-        
+    /// <summary>
+    /// Add a new room
+    /// </summary>
+    /// <param name="roomDTO">Room object</param>
+    /// <returns>The newly created room</returns>
     [HttpPost]
     [Authorize]
-    public async Task<ActionResult<Room>> PostRoom(CreateRoomDTO roomDTO) 
+    public async Task<ActionResult<Room>> PostRoom(RoomDTO roomDTO)
     {
         var roomType = await _context.RoomType.FirstOrDefaultAsync(rt => rt.Id == roomDTO.RoomTypeId);
-            
+
         if (roomType == null)
         {
             return BadRequest("Room Type does not exist");
         }
 
+        //We update the room objects with the new values from the RoomDTO object.
         var room = new Room
         {
             Capacity = roomDTO.Capacity,
@@ -108,15 +115,20 @@ public class RoomsController : ControllerBase
             RoomNumber = roomDTO.RoomNumber,
             PricePerNight = roomDTO.PricePerNight,
             Facilities = roomDTO.Facilities
-        };    
+        };
 
+        //Simple CRUD operation
         _context.Rooms.Add(room);
         await _context.SaveChangesAsync();
 
         return CreatedAtAction(nameof(GetRoom), new { id = room.Id }, room); //Returns the newly created room
     }
 
-    // DELETE: api/Rooms/5
+    /// <summary>
+    /// Method that deletes a room based on ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     [HttpDelete("{id}")]
     [Authorize]
     public async Task<IActionResult> DeleteRoom(int id)

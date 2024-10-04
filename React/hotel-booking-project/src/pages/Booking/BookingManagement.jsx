@@ -6,26 +6,30 @@ const BookingManagement = () => {
     const [bookings, setBookings] = useState([]);
     const [editBooking, setEditBooking] = useState(null);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(true); // Track loading state
+    const [loading, setLoading] = useState(true);
     const { keycloak } = useContext(KeycloakContext);
 
-    axios.defaults.baseURL = 'https://localhost:7207/api'; // Adjust to match your backend API URL
+    axios.defaults.baseURL = 'https://localhost:7207/api';
 
-    // Fetch bookings when the component mounts
+    // Fetch bookings
     useEffect(() => {
         fetchBookings();
     }, []);
 
+    //Method to get the bookings, that have been made.
     const fetchBookings = async () => {
+        //Confirms if the user is Authorized
         try {
             let config = {
                 headers: {
                     accept: "application/json",
-                    authorization: `Bearer ${keycloak.token}` // Add the Keycloak token for authorization
+                    authorization: `Bearer ${keycloak.token}`
                 }
             };
+            //Gets the data about the bookings
             const response = await axios.get('/Booking', config);
             setBookings(response.data);
+        //Error handling
         } catch (error) {
             setError('Failed to fetch bookings');
         } finally {
@@ -33,8 +37,9 @@ const BookingManagement = () => {
         }
     };
 
-    // Update the booking with the edited dates
+    // Allows the user to update the date of the booking
     const updateBooking = async (booking) => {
+        //Gets the new requested date and time
         try {
             const updatedBooking = {
                 id: booking.id,
@@ -45,6 +50,7 @@ const BookingManagement = () => {
                 isReserved: booking.isReserved,
             };
 
+            //Authentication
             let config = {
                 headers: {
                     accept: "application/json",
@@ -68,14 +74,17 @@ const BookingManagement = () => {
 
     // Cancel (delete) a booking
     const cancelBooking = async (id) => {
+        //Pop up message to confirm that the booking should be deleted/canceled
         if (window.confirm('Are you sure you want to cancel this booking?')) {
+            //Authentication
             try {
                 let config = {
                     headers: {
                         accept: "application/json",
-                        authorization: `Bearer ${keycloak.token}` // Add the Keycloak token for authorization
+                        authorization: `Bearer ${keycloak.token}`
                     }
                 };
+              
                 await axios.delete(`/Booking/${id}`, config); // Delete the booking
                 setBookings(prevBookings => prevBookings.filter(b => b.id !== id)); // Remove booking from the state
             } catch (error) {
@@ -84,12 +93,14 @@ const BookingManagement = () => {
         }
     };
 
+    // When button is pressed then allows the user to edit the booking
     const handleEdit = (booking) => {
-        setEditBooking(booking); // Set the booking that the user wants to edit
+        setEditBooking(booking); 
     };
 
+    // When button is pressed it cancels the booking
     const handleCancelEdit = () => {
-        setEditBooking(null); // Reset the edit state to cancel the edit form
+        setEditBooking(null);
     };
 
     return (
@@ -119,7 +130,9 @@ const BookingManagement = () => {
                                                 value={editBooking?.checkOut ? new Date(editBooking.checkOut).toISOString().slice(0, 16) : ''} //convert to ISO string and format
                                                 onChange={(e) => setEditBooking({ ...editBooking, checkOut: e.target.value })}
                                             />
+                                            {/* Saves the changes made in the database */ }
                                             <button onClick={() => updateBooking(editBooking)}>Save</button>
+                                            {/* Button to cancel booking */ }
                                             <button onClick={handleCancelEdit}>Cancel</button>
                                         </div>
                                     ) : (

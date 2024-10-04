@@ -1,5 +1,6 @@
 ﻿namespace DomainModels.Models.Entities;
 
+//Class to handle data for the mail service
 public class MailData
 {
     public string EmailToId { get; set; }

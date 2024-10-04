@@ -15,7 +15,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import { useLocation } from 'react-router-dom'; //Import useLocation for query params
 
-export default function MediaCard({ title, description, image, facilities }) {
+export default function MediaCard() {
     const [open, setOpen] = useState(false);
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
@@ -27,6 +27,11 @@ export default function MediaCard({ title, description, image, facilities }) {
     const [availableRoomId, setAvailableRoomId] = useState(null);
     const [roomPrice, setRoomPrice] = useState(0);
     const [isLocked, setIsLocked] = useState(false); //Locking the dropdown
+
+    const title = 'Book a Room';
+    const description = 'Select a room type, check-in and check-out dates, and enter your email to book a room.';
+    const image = 'https://source.unsplash.com/345x190/?hotel-room'; //Random image
+    const facilities = ['Wi-Fi', 'TV', 'Air Conditioning', 'Mini Bar']; //Facilities for the room
 
     const location = useLocation(); //Hook to access URL query params
 
