@@ -44,7 +44,7 @@ const RoomManagement: React.FC = () => {
       headerName: "Room Type",
       width: 150,
       valueGetter: (value, row: Room) =>
-        capitalize(row.roomType?.roomTypeName) || "ERROR",
+        capitalize(row?.roomType?.roomTypeName ?? "") || "ERROR",
     },
     { field: "pricePerNight", headerName: "Price Per Night", width: 150 },
     {
