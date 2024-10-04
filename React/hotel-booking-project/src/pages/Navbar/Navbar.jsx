@@ -17,11 +17,11 @@ import { KeycloakContext } from '../../App';
 // Define the available pages for navigation
 const pages = [
     { label: 'Contact', href: '/contact', requireLogin: false, requireNotLogin: false },
-    { label: 'Signup', href: '/', requireLogin: false, requireNotLogin: true },
+    { label: 'Signup', href: '/signup', requireLogin: false, requireNotLogin: true },
     { label: 'Rooms', href: '/rooms', requireLogin: false, requireNotLogin: false },
     { label: 'Booking', href: '/manage-booking', requireLogin: true, requireNotLogin: false },
     { label: 'Tickets', href: '/ticket', requireLogin: true, requireNotLogin: false },
-    { label: 'Login', href: '/', requireLogin: false, requireNotLogin: true },
+    { label: 'Login', href: '/login', requireLogin: false, requireNotLogin: true },
 ];
 
 // Define user-specific settings in the dropdown menu
