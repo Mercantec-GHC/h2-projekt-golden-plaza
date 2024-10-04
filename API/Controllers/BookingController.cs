@@ -35,7 +35,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
-            return await _context.Bookings.ToListAsync();
+            var bookings = await _context.Bookings.Include(b => b.Room).ToListAsync();
+
+            bookings.ForEach(b =>
+            {
+                b.Room.RoomType = _context.Rooms.Find(b.Room.Id).RoomType;
+            });
+
+            return bookings;
         }
 
         /// <summary>
@@ -46,7 +53,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Booking>> GetBooking(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings.Include(b => b.Room).FirstOrDefaultAsync(b => b.Id == id);
 
             if (booking == null)
             {

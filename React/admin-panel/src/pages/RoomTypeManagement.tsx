@@ -31,16 +31,16 @@ const RoomTypeManagement: React.FC = () => {
 
   //Method to fetch the room types
   const fetchRoomTypes = async () => {
-      setLoading(true);
+    setLoading(true);
     //Requests the room types
     try {
       const response = await axios.get<RoomType[]>("/api/RoomType");
       console.log("Room Types:", response.data);
-        setRoomTypes(response.data);
-     //Error handling
+      setRoomTypes(response.data);
+      //Error handling
     } catch (error) {
       console.error("Error fetching room types:", error);
-     //When the data has been recieved, then it sets the loading to false, meaning it allows it to display the room types.
+      //When the data has been recieved, then it sets the loading to false, meaning it allows it to display the room types.
     } finally {
       setLoading(false);
     }
@@ -72,7 +72,7 @@ const RoomTypeManagement: React.FC = () => {
     try {
       await axios.delete(`/api/RoomType/${id}`);
       fetchRoomTypes();
-    //Error handling
+      //Error handling
     } catch (error) {
       console.error("Error deleting room type:", error);
     }
@@ -126,8 +126,8 @@ const RoomTypeManagement: React.FC = () => {
       sortable: false,
       filterable: false,
       renderCell: (params) => (
-          <>
-              {/* Buttons to handle functions */ }
+        <>
+          {/* Buttons to handle functions */}
           <Button
             color="primary"
             size="small"
@@ -189,7 +189,7 @@ const RoomTypeManagement: React.FC = () => {
       >
         Add Room Type
       </Button>
-      <Box sx={{ height: 600, width: "100%" }}>
+      <Box sx={{ height: 600, width: "100%", backgroundColor: "grey" }}>
         <DataGrid
           rows={roomTypes}
           columns={columns}
