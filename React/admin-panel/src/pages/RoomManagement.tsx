@@ -24,7 +24,6 @@ import {
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { KeycloakContext } from "../App";
 
-
 const RoomManagement: React.FC = () => {
   // Set Axios base URL (optional if API base is the same across the app)
   axios.defaults.baseURL = "https://localhost:7207";
@@ -98,7 +97,6 @@ const RoomManagement: React.FC = () => {
       ),
     },
   ];
-
 
   useEffect(() => {
     fetchRooms();
@@ -377,7 +375,7 @@ const RoomManagement: React.FC = () => {
       >
         Add Room
       </Button>
-      <Box sx={{ height: 400, width: "100%" }}>
+      <Box sx={{ height: 400, width: "100%", backgroundColor: "grey" }}>
         <DataGrid
           rows={rooms}
           columns={columns}

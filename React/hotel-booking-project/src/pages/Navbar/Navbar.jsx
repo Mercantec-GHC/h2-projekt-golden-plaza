@@ -16,12 +16,12 @@ import { KeycloakContext } from '../../App';
 
 // Define the available pages for navigation
 const pages = [
-    { label: 'Contact', href: '/contact' },
-    { label: 'Signup', href: '/signup' },
-    { label: 'Rooms', href: '/rooms' },
-    { label: 'Booking', href: '/manage-booking' },
-    { label: 'Tickets', href: '/ticket' },
-    { label: 'Login', href: '/login' },
+    { label: 'Contact', href: '/contact', requireLogin: false, requireNotLogin: false },
+    { label: 'Signup', href: '/login', requireLogin: false, requireNotLogin: true },
+    { label: 'Rooms', href: '/rooms', requireLogin: false, requireNotLogin: false },
+    { label: 'Booking', href: '/manage-booking', requireLogin: true, requireNotLogin: false },
+    { label: 'Tickets', href: '/ticket', requireLogin: true, requireNotLogin: false },
+    { label: 'Login', href: '/login', requireLogin: false, requireNotLogin: true },
 ];
 
 // Define user-specific settings in the dropdown menu
@@ -29,14 +29,16 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 // Main navigation bar component, responsible for rendering the app's navigation and user menu
 function ResponsiveAppBar() {
-    // State to manage the anchor element for the main navigation menu
     const [anchorElNav, setAnchorElNav] = React.useState(null);
-    
-    // State to manage the anchor element for the user menu (settings)
     const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const { keycloak, init } = React.useContext(KeycloakContext);
 
-    // Keycloak context to handle authentication, login/logout state
-    const { keycloak } = React.useContext(KeycloakContext); // Access keycloak from the context
+    // Filter pages based on login requirements
+    const filteredPages = pages.filter((page) => {
+        if (page.requireLogin && !keycloak.authenticated) return false;
+        if (page.requireNotLogin && keycloak.authenticated) return false;
+        return true;
+    });
 
     // Open the main navigation menu (mobile view)
     const handleOpenNavMenu = (event) => {
@@ -119,8 +121,7 @@ function ResponsiveAppBar() {
                             onClose={handleCloseNavMenu} // Close menu when clicked
                             sx={{ display: { xs: 'block', md: 'none' } }}
                         >
-                            {/* Render menu items for navigation */}
-                            {pages.map((page) => (
+                            {filteredPages.map((page) => (
                                 <MenuItem key={page.label} onClick={handleCloseNavMenu}>
                                     <Typography
                                         sx={{ textAlign: 'center', color: 'rgb(180 155 99)' }}
@@ -158,25 +159,16 @@ function ResponsiveAppBar() {
 
                     {/* Navigation buttons displayed in larger viewports */}
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        {/* Filter out 'Tickets' if not authenticated, and 'Login/Signup' if authenticated */}
-                        {pages.map((page) => {
-                            if (page.label === 'Tickets' && !keycloak.authenticated) {
-                                return null; // Hide 'Tickets' if not authenticated
-                            }
-                            if ((page.label === 'Login' || page.label === 'Signup') && keycloak.authenticated) {
-                                return null; // Hide 'Login' and 'Signup' if already authenticated
-                            }
-                            return (
-                                <Button
-                                    key={page.label}
-                                    href={page.href} // Navigate to the page's URL
-                                    onClick={handleCloseNavMenu} // Close the menu after navigation
-                                    sx={{ my: 2, color: 'rgb(180 155 99)', display: 'block' }}
-                                >
-                                    {page.label} {/* Display the page label */}
-                                </Button>
-                            );
-                        })}
+                        {filteredPages.map((page) => (
+                            <Button
+                                key={page.label}
+                                href={page.href} // Navigate to the page's URL
+                                onClick={handleCloseNavMenu} // Close the menu after navigation
+                                sx={{ my: 2, color: 'rgb(180 155 99)', display: 'block' }}
+                            >
+                                {page.label}
+                            </Button>
+                        ))}
                     </Box>
 
                     {/* User avatar or login button depending on authentication status */}
@@ -184,7 +176,7 @@ function ResponsiveAppBar() {
                         {!keycloak.authenticated ? (
                             // Show login button if not authenticated
                             <Tooltip title="Login">
-                                <IconButton href={pages[3].href} sx={{ p: 0 }}>
+                                <IconButton href="/login" sx={{ p: 0 }}>
                                     <Avatar sx={{ bgcolor: 'rgb(180 155 99)', color: 'black' }}>
                                         GP {/* Avatar with initials "GP" */}
                                     </Avatar>

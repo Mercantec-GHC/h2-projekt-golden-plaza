@@ -8,6 +8,7 @@ import BatchImport from "./pages/BatchImport.tsx";
 import AuthProvider from "./components/AuthProvider.tsx";
 import Sidebar from "./components/Sidebar.tsx";
 import Tickets from "./pages/Tickets.tsx";
+import BookingManagement from "./pages/BookingManagement.tsx";
 
 export const KeycloakContext = createContext<{
   keycloak: Keycloak.KeycloakInstance | null;
@@ -25,7 +26,7 @@ export const KeycloakContext = createContext<{
 function App() {
   return (
     <>
-          {/* AuthProvider is used to make sure the user is authorized to access these pages. Specifically if they are logged in. */ }
+      {/* AuthProvider is used to make sure the user is authorized to access these pages. Specifically if they are logged in. */}
       <AuthProvider>
         <Sidebar />
         <Routes>
@@ -34,6 +35,7 @@ function App() {
           <Route path="/roommanagement" element={<RoomManagement />} />
           <Route path="/tickets" element={<Tickets />} />
           <Route path="/roomtypes" element={<RoomTypeManagement />} />
+          <Route path="/bookings" element={<BookingManagement />} />
           <Route path="/batch-import" element={<BatchImport />} />
         </Routes>
       </AuthProvider>

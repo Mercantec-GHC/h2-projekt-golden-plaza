@@ -16,6 +16,6 @@ namespace DomainModels.DTO
 
         public int RoomId { get; set; }    // Foreign key to Room
 
-        public int? UserId { get; set; }   // Foreign key to Customer
+        public string? UserId { get; set; }   // Foreign key to Customer
     }
 }

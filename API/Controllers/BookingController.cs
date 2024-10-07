@@ -35,7 +35,14 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
         {
-            return await _context.Bookings.ToListAsync();
+            var bookings = await _context.Bookings.Include(b => b.Room).ToListAsync();
+
+            bookings.ForEach(b =>
+            {
+                b.Room.RoomType = _context.Rooms.Find(b.Room.Id).RoomType;
+            });
+
+            return bookings;
         }
 
         /// <summary>
@@ -46,7 +53,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Booking>> GetBooking(int id)
         {
-            var booking = await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings.Include(b => b.Room).FirstOrDefaultAsync(b => b.Id == id);
 
             if (booking == null)
             {
@@ -62,13 +69,30 @@ namespace API.Controllers
         /// <param name="booking">The booking object to create.</param>
         /// <returns>The created booking along with its URL location.</returns>
         [HttpPost]
-        public async Task<ActionResult<Booking>> PostBooking(Booking booking)
+        public async Task<ActionResult<Booking>> PostBooking(CreateBookingDTO bookingdto)
         {
-            // Check for overlapping bookings before adding a new booking.
-            if (IsBookingOverlapping(booking))
+            // Find the first available room of the specified type for the booking dates.
+            var room = FirstAvailableRoom(bookingdto.CheckIn, bookingdto.CheckOut, bookingdto.RoomTypeId);
+
+            // Return a 400 Bad Request if no available rooms are found.
+            if (room == null)
             {
-                return BadRequest("Booking is overlapping with another booking.");
+                return BadRequest("No available rooms of the specified type.");
             }
+
+            // Calculate the price based on the room price per night and booking dates.
+            decimal price = (bookingdto.CheckOut - bookingdto.CheckIn).Days * room.PricePerNight;
+
+            // Create a new booking object based on the DTO.
+            Booking booking = new Booking
+            {
+                CheckIn = bookingdto.CheckIn,
+                CheckOut = bookingdto.CheckOut,
+                Price = price,
+                IsReserved = false,
+                Room = room,
+                UserId = bookingdto.UserId
+            };
 
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
@@ -192,6 +216,32 @@ namespace API.Controllers
                           b.Id != newBooking.Id &&                                                      // Exclude the current booking when updating
                           ((newBooking.CheckIn < b.CheckOut) && (newBooking.CheckOut > b.CheckIn))      // Check for date overlap
                     );
+        }
+
+        /// <summary>
+        /// Returns first available room of the type provided within available dates
+        /// </summary>
+        /// <param name="checkIn"></param>
+        /// <param name="checkOut"></param>
+        /// <param name="roomType"></param>
+        /// <returns></returns>
+        private Room FirstAvailableRoom(DateTime checkIn, DateTime checkOut, int roomTypeId)
+        {
+            // Get all rooms of the specified type
+            var rooms = _context.Rooms.Where(r => r.RoomType.Id == roomTypeId).ToList();
+
+            // Check each room for availability
+            foreach (var room in rooms)
+            {
+                // Check if the room is available for the specified dates
+                if (!_context.Bookings.Any(b => b.RoomId == room.Id &&
+                                                ((checkIn < b.CheckOut) && (checkOut > b.CheckIn))))
+                {
+                    return room;
+                }
+            }
+
+            return null;
         }
     }
 }

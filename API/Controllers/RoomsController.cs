@@ -27,7 +27,7 @@ public class RoomsController : ControllerBase
     public async Task<ActionResult<IEnumerable<Room>>> GetRooms()
     {
         //Simple CRUD operation
-        return await _context.Rooms.ToListAsync();
+        return await _context.Rooms.Include(r => r.RoomType).ToListAsync();
     }
 
     /// <summary>
