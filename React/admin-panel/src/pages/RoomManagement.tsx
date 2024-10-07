@@ -209,7 +209,7 @@ const RoomManagement: React.FC = () => {
       const roomData: Room | CreateRoomDTO = {
         id: currentRoom.id || 0, // Exclude 'id' when creating a new room
         capacity: currentRoom.capacity || 0,
-        roomType: currentRoom.roomType as RoomType,
+        roomTypeId: (currentRoom.roomType as RoomType).id || 0,
         roomNumber: currentRoom.roomNumber || 0,
         pricePerNight: currentRoom.pricePerNight || 0,
         facilities: currentRoom.facilities || [],

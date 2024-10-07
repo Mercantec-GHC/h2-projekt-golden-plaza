@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using DomainModels.Models.Entities;
 using Microsoft.AspNetCore.Authorization;
+using DomainModels.DTO;
 
 namespace API.Controllers;
 
@@ -59,16 +60,28 @@ public class RoomsController : ControllerBase
     /// <returns>No Content</returns>
     [HttpPut("{id}")]
     [Authorize]
-    public async Task<IActionResult> PutRoom(int id, Room room)
+    public async Task<IActionResult> PutRoom(int id, CreateRoomDTO roomdto)
     {
-        //Error handling
-        if (id != room.Id)
-        {
-            return BadRequest();
-        }
-
         //Simple Crud Operation
-        _context.Rooms.Update(room);
+
+        Room? room = await _context.Rooms.FindAsync(id);
+
+        if (room == null)
+            return NotFound("Room does not exist");
+
+        RoomType? roomType = await _context.RoomType.FindAsync(roomdto.RoomTypeId);
+
+        if (roomType == null)
+            return BadRequest("Room Type does not exist");
+
+        room.Capacity = roomdto.Capacity;
+        room.RoomNumber = roomdto.RoomNumber;
+        room.PricePerNight = roomdto.PricePerNight;
+        room.Facilities = roomdto.Facilities;
+        room.RoomType = roomType;
+
+        _context.Entry(room).State = EntityState.Modified;
+
 
         //Saves changes or discards them.
         try
