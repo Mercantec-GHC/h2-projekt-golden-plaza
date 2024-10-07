@@ -41,17 +41,18 @@ const Tickets = () => {
         description: string;
         status: number;
     }
-
+    const { keycloak } = useContext(KeycloakContext);
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [newTicket, setNewTicket] = useState({
         title: "",
         description: "",
         status: 0,
+        UserId: keycloak?.subject || "",
     });
     const [editTicket, setEditTicket] = useState<Ticket | null>(null);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(true); //Track loading state
-    const { keycloak } = useContext(KeycloakContext);
+   
 
     //Set Axios base URL also known as base API url
     axios.defaults.baseURL = "https://localhost:7207/api";
@@ -89,7 +90,8 @@ const Tickets = () => {
             };
             const response = await axios.post("/Ticket", newTicket, config);
             setTickets([...tickets, response.data]);
-            setNewTicket({ title: "", description: "", status: 0 });
+            setNewTicket({ title: "", description: "", status: 0, UserId: keycloak?.subject || "" });
+            console.log(keycloak?.subject);
         } catch (error) {
             setError("Failed to add ticket");
         }
